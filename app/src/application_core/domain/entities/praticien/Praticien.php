@@ -5,17 +5,6 @@ namespace toubilib\core\domain\entities\praticien;
 
 class Praticien
 {
-//    string id
-//    string nom
-//    string prenom
-//    string ville
-//    string email
-//    string telephone
-//    string rpps_id
-//    string titre
-//    boolean accepte_nouveau_patient
-//    boolean est_organisation
-
     private string $id;
     private string $nom;
     private string $prenom;
