@@ -15,7 +15,36 @@ class Praticien
     private string $titre;
     private bool $accepte_nouveau_patient;
     private bool $est_organisation;
+    private Specialite $specialite;
 
+//    public function __construct(array $data)
+//    {
+//        $this->id = $data['id'];
+//        $this->nom = $data['nom'];
+//        $this->prenom = $data['prenom'];
+//        $this->ville = $data['ville'];
+//        $this->email = $data['email'];
+//        $this->telephone = $data['telephone'];
+//        $this->rpps_id = $data['rpps_id'];
+//        $this->titre = $data['titre'];
+//        $this->accepte_nouveau_patient = (bool)$data['nouveau_patient'];
+//        $this->est_organisation = (bool)$data['organisation'];
+//    }
+
+    public function __construct(string $id, string $nom, string $prenom, string $ville, string $email, string $telephone, string $rpps_id, string $titre, bool $accepte_nouveau_patient, bool $est_organisation, Specialite $specialite)
+    {
+        $this->id = $id;
+        $this->nom = $nom;
+        $this->prenom = $prenom;
+        $this->ville = $ville;
+        $this->email = $email;
+        $this->telephone = $telephone;
+        $this->rpps_id = $rpps_id;
+        $this->titre = $titre;
+        $this->accepte_nouveau_patient = $accepte_nouveau_patient;
+        $this->est_organisation = $est_organisation;
+        $this->specialite = $specialite;
+    }
 
     public function isEstOrganisation(): bool
     {
