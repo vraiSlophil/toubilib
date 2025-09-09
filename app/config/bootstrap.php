@@ -1,13 +1,22 @@
 <?php
 
 use DI\ContainerBuilder;
+use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
-use toubilib\api\middlewares\Cors;
 
-$dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ );
+$dotenv = Dotenv::createImmutable(__DIR__ );
 $dotenv->load();
 
+$builder = new ContainerBuilder();
+$builder->addDefinitions(__DIR__ . '/settings.php');
 
+try {
+    $c = $builder->build();
+} catch (Exception $e) {
+    echo "Erreur lors de la création du conteneur : " . $e->getMessage();
+    exit(1);
+}
+AppFactory::setContainer($c);
 
 $app = AppFactory::create();
 
