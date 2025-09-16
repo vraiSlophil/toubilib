@@ -1,6 +1,6 @@
 <?php
 
-use toubilib\core\application\ports\api\ServicePraticienInterface;
+use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\usecases\ServicePraticien;

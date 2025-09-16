@@ -15,7 +15,19 @@ return function (App $app): App {
         return $response;
     });
 
-  $app->get('/praticiens', ListerPraticiensAction::class);
+    $app->get('/praticiens', ListerPraticiensAction::class);
+    $app->get('/praticiens/{praticienId}', AfficherPraticienAction::class);
+    $app->get('/praticiens/{praticienId}/rdvs', ListerCreneauxPrisAction::class);
+    $app->get('/rdvs/{rdvId}', ConsulterRdvAction::class);
+
+    $app->get('/rdvs', function ($request, $response) use ($app) {
+        $q = $request->getQueryParams();
+        if (!isset($q['praticienId'], $q['debut'], $q['fin'])) {
+            return $response->withStatus(400);
+        }
+        return (new ListerCreneauxPrisAction($app->getContainer()->get(ServiceRdvInterface::class)))
+        ($request->withAttribute('praticienId', $q['praticienId']), $response, ['praticienId' => $q['praticienId']]);
+    });
 
     return $app;
 };

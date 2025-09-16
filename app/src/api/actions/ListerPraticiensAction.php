@@ -5,7 +5,7 @@ namespace toubilib\api\actions;
 use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use toubilib\core\application\ports\api\ServicePraticienInterface;
+use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 
 class ListerPraticiensAction
 {

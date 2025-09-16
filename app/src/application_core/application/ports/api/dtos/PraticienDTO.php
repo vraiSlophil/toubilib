@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\core\application\ports\api;
+namespace toubilib\core\application\ports\api\dtos;
 
 class PraticienDTO
 {

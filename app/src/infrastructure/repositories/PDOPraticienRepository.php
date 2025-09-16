@@ -62,4 +62,68 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
 
         return $praticiens;
     }
+
+    public function findDetailById(string $id): ?PraticienDetailDTO
+    {
+        $sql = 'SELECT p.*, s.id AS specialite_id, s.libelle AS specialite_libelle, s.description AS specialite_description,
+                       st.id AS structure_id, st.nom AS structure_nom, st.adresse AS structure_adresse,
+                       st.ville AS structure_ville, st.code_postal AS structure_code_postal, st.telephone AS structure_telephone
+                FROM praticien p
+                JOIN specialite s ON s.id = p.specialite_id
+                LEFT JOIN structure st ON st.id = p.structure_id
+                WHERE p.id = :id';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $p = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$p) { return null; }
+
+        $motifs = $this->fetchAllAssoc('SELECT m.id, m.libelle
+                                        FROM praticien2motif pm
+                                        JOIN motif_visite m ON m.id = pm.motif_id
+                                        WHERE pm.praticien_id = :id
+                                        ORDER BY m.libelle', [':id' => $id]);
+
+        $moyens = $this->fetchAllAssoc('SELECT mp.id, mp.libelle
+                                        FROM praticien2moyen pm
+                                        JOIN moyen_paiement mp ON mp.id = pm.moyen_id
+                                        WHERE pm.praticien_id = :id
+                                        ORDER BY mp.libelle', [':id' => $id]);
+
+        $structure = $p['structure_id'] ? [
+            'id' => $p['structure_id'],
+            'nom' => $p['structure_nom'],
+            'adresse' => $p['structure_adresse'],
+            'ville' => $p['structure_ville'],
+            'code_postal' => $p['structure_code_postal'],
+            'telephone' => $p['structure_telephone'],
+        ] : null;
+
+        return new PraticienDetailDTO(
+            id: (string)$p['id'],
+            nom: (string)$p['nom'],
+            prenom: (string)$p['prenom'],
+            titre: (string)$p['titre'],
+            email: (string)$p['email'],
+            telephone: (string)$p['telephone'],
+            ville: (string)$p['ville'],
+            rppsId: $p['rpps_id'] ?: null,
+            organisation: ((string)$p['organisation']) === '1',
+            nouveauPatient: ((string)$p['nouveau_patient']) === '1',
+            specialite: [
+                'id' => (int)$p['specialite_id'],
+                'libelle' => (string)$p['specialite_libelle'],
+                'description' => $p['specialite_description'],
+            ],
+            structure: $structure,
+            motifs: $motifs,
+            moyens: $moyens
+        );
+    }
+
+    private function fetchAllAssoc(string $sql, array $params): array
+    {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
 }
