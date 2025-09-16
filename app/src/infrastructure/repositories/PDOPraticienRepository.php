@@ -5,18 +5,20 @@ namespace toubilib\infra\repositories;
 
 use PDO;
 use Psr\Log\LoggerInterface;
+use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\domain\entities\praticien\Praticien;
 use toubilib\core\domain\entities\praticien\Specialite;
+use toubilib\infra\adapters\MonologLogger;
 
 class PDOPraticienRepository implements PraticienRepositoryInterface
 {
 
     private PDO $pdo;
-    private LoggerInterface $logger;
+    private MonologLogger $logger;
 
 
-    public function __construct(PDO $pdo, LoggerInterface $logger)
+    public function __construct(PDO $pdo, MonologLoggerInterface $logger)
     {
         $this->pdo = $pdo;
         $this->logger = $logger;
@@ -33,9 +35,9 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
         ");
 
         $statement->execute();
-        $results = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        $this->logger->info(print_r($results, true));
+        $this->logger->debug(print_r($results, true));
 
         $praticiens = [];
         foreach ($results as $row) {

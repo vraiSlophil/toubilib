@@ -1,23 +1,14 @@
 <?php
 
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\FilterHandler;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
-use toubilib\api\actions\ListerPraticiensAction;
-use toubilib\core\application\ports\api\ServicePraticienInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\application\usecases\ServicePraticien;
-use toubilib\infra\repositories\PDOPraticienRepository;
+use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
+use toubilib\infra\adapters\MonologLogger;
 
 return [
     'settings' => [
-        'displayErrorDetails' => true, // set to false in production
+        'displayErrorDetails' => true,
         'logError'            => true,
         'logErrorDetails'     => true,
-        // Database settings
+        'logs_dir' => __DIR__ . '/../var/logs',
         'toubiprati.db' => [
             'host'    => getenv('TOUBIPRATI_DB_HOST')    ?: 'DB_HOST_PLACEHOLDER',
             'user'    => getenv('TOUBIPRATI_DB_USER')    ?: 'DB_USER_PLACEHOLDER',
@@ -27,34 +18,30 @@ return [
         ],
     ],
 
-    LoggerInterface::class => function (ContainerInterface $c) {
-        $logsDir = __DIR__ . '/../var/logs';
+//    LoggerInterface::class => function (ContainerInterface $c) {
+//        $logsDir = __DIR__ . '/../var/logs';
+//
+//        if (!is_dir($logsDir)) {
+//            mkdir($logsDir, 0775, true);
+//        }
+//
+//        $logger = new Logger('app');
+//
+//        $infoStream = new StreamHandler($logsDir . '/logs.log', Logger::DEBUG);
+//        $infoFilter = new FilterHandler($infoStream, Logger::DEBUG, Logger::INFO);
+//
+//        $errorStream = new StreamHandler($logsDir . '/errors.log', Logger::WARNING);
+//
+//        $formatter = new LineFormatter(null, null, true, true);
+//        $infoStream->setFormatter($formatter);
+//        $errorStream->setFormatter($formatter);
+//
+//        $logger->pushHandler($infoFilter);
+//        $logger->pushHandler($errorStream);
+//
+//        return $logger;
+//    },
 
-        if (!is_dir($logsDir)) {
-            mkdir($logsDir, 0775, true);
-        }
-
-        $logger = new Logger('app');
-
-        // fichier pour DEBUG..INFO (ici on garde DEBUG..INFO pour inclure INFO)
-        $infoStream = new StreamHandler($logsDir . '/logs.log', Logger::DEBUG);
-        $infoFilter = new FilterHandler($infoStream, Logger::DEBUG, Logger::INFO);
-
-        // fichier pour WARNING et plus
-        $errorStream = new StreamHandler($logsDir . '/errors.log', Logger::WARNING);
-
-        // (optionnel) formatter
-        $formatter = new LineFormatter(null, null, true, true);
-        $infoStream->setFormatter($formatter);
-        $errorStream->setFormatter($formatter);
-
-        $logger->pushHandler($infoFilter);
-        $logger->pushHandler($errorStream);
-
-        return $logger;
-    },
-
-    // Connexion PDO pour la base "praticien"
     'db.praticien' => static function (): PDO {
         $driver = $_ENV['prat.driver'] ?? 'pgsql';
         $host = $_ENV['prat.host'] ?? 'localhost';
@@ -74,23 +61,7 @@ return [
         ]);
     },
 
-    PraticienRepositoryInterface::class => static function ($c) {
-        return new PDOPraticienRepository(
-            $c->get('db.praticien'),
-            $c->get(LoggerInterface::class)
-        );
+    MonologLoggerInterface::class => static function ($c) {
+        return new MonologLogger($c);
     },
-
-    ServicePraticienInterface::class => static function ($c) {
-        return new ServicePraticien(
-            $c->get(PraticienRepositoryInterface::class)
-        );
-    },
-
-    ListerPraticiensAction::class => static function ($c) {
-        return new ListerPraticiensAction(
-            $c->get(ServicePraticienInterface::class)
-        );
-    },
-
 ];

@@ -7,8 +7,8 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../config/bootstrap.php';
 
-use toubilib\core\infrastructure\repositories\PDOPraticienRepository;
 use toubilib\core\application\usecases\ServicePraticien;
+use toubilib\infra\repositories\PDOPraticienRepository;
 
 echo "=== Test du Service Praticien ===\n";
 
