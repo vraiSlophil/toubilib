@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Slim\App;
 use toubilib\api\actions\ListerPraticiensAction;
 
 
-return function (\Slim\App $app): \Slim\App {
+return function (App $app): App {
 
 
     $app->get('/', function (Request $request, Response $response) {

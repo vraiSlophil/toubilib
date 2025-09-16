@@ -20,3 +20,5 @@ composer.lock
 /app/config/.env
 .env
 *.env
+.log
+*.log

@@ -145,4 +145,14 @@ class Praticien
     {
         $this->id = $id;
     }
+
+    public function getSpecialite(): Specialite
+    {
+        return $this->specialite;
+    }
+
+    public function setSpecialite(Specialite $specialite): void
+    {
+        $this->specialite = $specialite;
+    }
 }
