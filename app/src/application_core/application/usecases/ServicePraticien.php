@@ -39,6 +39,6 @@ class ServicePraticien implements ServicePraticienInterface
 
     public function getPraticienDetail(string $id): ?PraticienDetailDTO
     {
-        return $this->repo->findDetailById($id);
+        return $this->praticienRepository->findDetailById($id);
     }
 }
