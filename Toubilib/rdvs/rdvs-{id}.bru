@@ -1,0 +1,15 @@
+meta {
+  name: /rdvs/{id}
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{API_SRC}}/rdvs/{{rdvId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
