@@ -9,13 +9,6 @@ return [
         'logError'            => true,
         'logErrorDetails'     => true,
         'logs_dir' => __DIR__ . '/../var/logs',
-        'toubiprati.db' => [
-            'host'    => getenv('TOUBIPRATI_DB_HOST')    ?: 'DB_HOST_PLACEHOLDER',
-            'user'    => getenv('TOUBIPRATI_DB_USER')    ?: 'DB_USER_PLACEHOLDER',
-            'pass'    => getenv('TOUBIPRATI_DB_PASS')    ?: 'DB_PASS_PLACEHOLDER',
-            'dbname'  => getenv('TOUBIPRATI_DB_NAME')    ?: 'DB_NAME_PLACEHOLDER',
-            'charset' => getenv('TOUBIPRATI_DB_CHARSET') ?: 'utf8mb4',
-        ],
     ],
 
 //    LoggerInterface::class => function (ContainerInterface $c) {
@@ -43,11 +36,11 @@ return [
 //    },
 
     'db.praticien' => static function (): PDO {
-        $driver = $_ENV['prat.driver'] ?? 'pgsql';
-        $host = $_ENV['prat.host'] ?? 'localhost';
-        $db = $_ENV['prat.database'] ?? 'toubiprat';
-        $user = $_ENV['prat.username'] ?? 'toubiprat';
-        $pass = $_ENV['prat.password'] ?? 'toubiprat';
+        $driver = $_ENV['prat.driver'];
+        $host = $_ENV['prat.host'];
+        $db = $_ENV['prat.database'];
+        $user = $_ENV['prat.username'];
+        $pass = $_ENV['prat.password'];
         $charset = 'utf8mb4';
 
         $dsn = $driver === 'mysql'
@@ -62,11 +55,49 @@ return [
     },
 
     'db.rdv' => static function (): PDO {
-        $driver = $_ENV['rdv.driver'] ?? 'pgsql';
-        $host = $_ENV['rdv.host'] ?? 'localhost';
-        $db = $_ENV['rdv.database'] ?? 'toubirdv';
-        $user = $_ENV['rdv.username'] ?? 'toubirdv';
-        $pass = $_ENV['rdv.password'] ?? 'toubirdv';
+        $driver = $_ENV['rdv.driver'];
+        $host = $_ENV['rdv.host'];
+        $db = $_ENV['rdv.database'];
+        $user = $_ENV['rdv.username'];
+        $pass = $_ENV['rdv.password'];
+        $charset = 'utf8mb4';
+
+        $dsn = $driver === 'mysql'
+            ? "mysql:host={$host};dbname={$db};charset={$charset}"
+            : "pgsql:host={$host};dbname={$db}";
+
+        return new PDO($dsn, $user, $pass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
+    },
+
+    'db.patient' => static function (): PDO {
+        $driver = $_ENV['pat.driver'];
+        $host = $_ENV['pat.host'];
+        $db = $_ENV['pat.database'];
+        $user = $_ENV['pat.username'];
+        $pass = $_ENV['pat.password'];
+        $charset = 'utf8mb4';
+
+        $dsn = $driver === 'mysql'
+            ? "mysql:host={$host};dbname={$db};charset={$charset}"
+            : "pgsql:host={$host};dbname={$db}";
+
+        return new PDO($dsn, $user, $pass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
+    },
+
+    'db.authentification' => static function (): PDO {
+        $driver = $_ENV['auth.driver'];
+        $host = $_ENV['auth.host'];
+        $db = $_ENV['auth.database'];
+        $user = $_ENV['auth.username'];
+        $pass = $_ENV['auth.password'];
         $charset = 'utf8mb4';
 
         $dsn = $driver === 'mysql'
