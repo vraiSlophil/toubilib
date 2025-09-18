@@ -5,10 +5,13 @@ namespace toubilib\infra\repositories;
 use PDO;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use toubilib\core\domain\entities\MotifVisite;
+use toubilib\core\domain\entities\MoyenPaiement;
 use toubilib\core\domain\entities\Praticien;
 use toubilib\core\domain\entities\Specialite;
+use toubilib\core\domain\entities\Structure;
 use toubilib\infra\adapters\MonologLogger;
-use toubilib\core\application\ports\api\dtos\PraticienDetailDTO;
+use toubilib\core\domain\entities\PraticienDetail;
 
 class PDOPraticienRepository implements PraticienRepositoryInterface
 {
@@ -62,7 +65,7 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
         return $praticiens;
     }
 
-    public function findDetailById(string $id): ?PraticienDetailDTO
+    public function findDetailById(string $id): ?PraticienDetail
     {
         $sql = 'SELECT p.*, s.id AS specialite_id, s.libelle AS specialite_libelle, s.description AS specialite_description,
                        st.id AS structure_id, st.nom AS structure_nom, st.adresse AS structure_adresse,
@@ -78,28 +81,44 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
             return null;
         }
 
-        $motifs = $this->fetchAllAssoc('SELECT m.id, m.libelle
+        $motifsRows = $this->fetchAllAssoc('SELECT m.id, m.libelle
                                         FROM praticien2motif pm
                                         JOIN motif_visite m ON m.id = pm.motif_id
                                         WHERE pm.praticien_id = :id
                                         ORDER BY m.libelle', [':id' => $id]);
 
-        $moyens = $this->fetchAllAssoc('SELECT mp.id, mp.libelle
+        $moyensRows = $this->fetchAllAssoc('SELECT mp.id, mp.libelle
                                         FROM praticien2moyen pm
                                         JOIN moyen_paiement mp ON mp.id = pm.moyen_id
                                         WHERE pm.praticien_id = :id
                                         ORDER BY mp.libelle', [':id' => $id]);
 
-        $structure = $p['structure_id'] ? [
-            'id' => $p['structure_id'],
-            'nom' => $p['structure_nom'],
-            'adresse' => $p['structure_adresse'],
-            'ville' => $p['structure_ville'],
-            'code_postal' => $p['structure_code_postal'],
-            'telephone' => $p['structure_telephone'],
-        ] : null;
+        $specialite = new Specialite(
+            (int)$p['specialite_id'],
+            (string)$p['specialite_libelle'],
+            $p['specialite_description']
+        );
 
-        return new PraticienDetailDTO(
+        $structure = $p['structure_id'] ? new Structure(
+            (string)$p['structure_id'],
+            (string)$p['structure_nom'],
+            (string)$p['structure_adresse'],
+            (string)$p['structure_ville'],
+            (string)$p['structure_code_postal'],
+            (string)$p['structure_telephone']
+        ) : null;
+
+        $motifs = array_map(
+            static fn(array $r) => new MotifVisite((int)$r['id'], (string)$r['libelle']),
+            $motifsRows
+        );
+
+        $moyens = array_map(
+            static fn(array $r) => new MoyenPaiement((int)$r['id'], (string)$r['libelle']),
+            $moyensRows
+        );
+
+        return new PraticienDetail(
             id: (string)$p['id'],
             nom: (string)$p['nom'],
             prenom: (string)$p['prenom'],
@@ -108,18 +127,15 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
             telephone: (string)$p['telephone'],
             ville: (string)$p['ville'],
             rppsId: $p['rpps_id'] ?: null,
-            organisation: ((string)$p['organisation']) === '1',
-            nouveauPatient: ((string)$p['nouveau_patient']) === '1',
-            specialite: [
-                'id' => (int)$p['specialite_id'],
-                'libelle' => (string)$p['specialite_libelle'],
-                'description' => $p['specialite_description'],
-            ],
+            organisation: ((string)$p['organisation']) === '1' || (string)$p['organisation'] === 't' || (string)$p['organisation'] === 'B\'1\'',
+            nouveauPatient: ((string)$p['nouveau_patient']) === '1' || (string)$p['nouveau_patient'] === 't' || (string)$p['nouveau_patient'] === 'B\'1\'',
+            specialite: $specialite,
             structure: $structure,
             motifs: $motifs,
             moyens: $moyens
         );
     }
+
 
     private function fetchAllAssoc(string $sql, array $params): array
     {

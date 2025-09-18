@@ -3,7 +3,6 @@
 namespace toubilib\core\application\usecases;
 
 
-
 use toubilib\core\application\ports\api\dtos\PraticienDTO;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
@@ -39,6 +38,48 @@ class ServicePraticien implements ServicePraticienInterface
 
     public function getPraticienDetail(string $id): ?PraticienDetailDTO
     {
-        return $this->praticienRepository->findDetailById($id);
+        $detail = $this->praticienRepository->findDetailById($id);
+        if (!$detail) {
+            return null;
+        }
+
+        $specialite = $detail->getSpecialite();
+        $structure = $detail->getStructure();
+
+        return new PraticienDetailDTO(
+            id: $detail->getId(),
+            nom: $detail->getNom(),
+            prenom: $detail->getPrenom(),
+            titre: $detail->getTitre(),
+            email: $detail->getEmail(),
+            telephone: $detail->getTelephone(),
+            ville: $detail->getVille(),
+            rppsId: $detail->getRppsId(),
+            organisation: $detail->isOrganisation(),
+            nouveauPatient: $detail->isNouveauPatient(),
+            specialite: [
+//                'id' => $specialite->getId(),
+                'libelle' => $specialite->getLibelle(),
+                'description' => $specialite->getDescription(),
+            ],
+            structure: $structure ? [
+                'id' => $structure->getId(),
+                'nom' => $structure->getNom(),
+                'adresse' => $structure->getAdresse(),
+                'ville' => $structure->getVille(),
+                'code_postal' => $structure->getCodePostal(),
+                'telephone' => $structure->getTelephone(),
+            ] : null,
+            motifs: array_map(static fn($m) => [
+//                'id' => $m->getId(),
+                'libelle' => $m->getLibelle()
+            ],
+                $detail->getMotifs()),
+            moyens: array_map(static fn($m) => [
+//                'id' => $m->getId(),
+                'libelle' => $m->getLibelle()
+            ],
+                $detail->getMoyens())
+        );
     }
 }

@@ -16,8 +16,8 @@ return function (App $app): App {
 
     $app->group('/api', function (RouteCollectorProxy $app) {
         $app->get('/', function (Request $request, Response $response) {
-            $response->getBody()->write('Bienvenue sur l\'API des praticiens !');
-            return $response;
+            $response->getBody()->write(json_encode('Bienvenue sur l\'API des praticiens !'));
+            return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
         });
         $app->group('/praticiens', function (RouteCollectorProxy $app) {
             $app->get('', ListerPraticiensAction::class);
@@ -26,18 +26,18 @@ return function (App $app): App {
                 $app->get('/rdvs', ListerCreneauxPrisAction::class);
             });
         });
-        $app->get('/rdvs/{rdvId}', ConsulterRdvAction::class);
-
-        $app->get('/rdvs', function ($request, $response) use ($app) {
-            $q = $request->getQueryParams();
-            if (!isset($q['praticienId'], $q['debut'], $q['fin'])) {
-                return $response->withStatus(400);
-            }
-            return new ListerCreneauxPrisAction($app->getContainer()->get(ServiceRdvInterface::class))
-            ($request->withAttribute('praticienId', $q['praticienId']), $response, ['praticienId' => $q['praticienId']]);
+        $app->group('/rdvs', function (RouteCollectorProxy $app) {
+            $app->get('', function ($request, $response) use ($app) {
+                $q = $request->getQueryParams();
+                if (!isset($q['praticienId'], $q['debut'], $q['fin'])) {
+                    return $response->withStatus(400);
+                }
+                return new ListerCreneauxPrisAction($app->getContainer()->get(ServiceRdvInterface::class))
+                ($request->withAttribute('praticienId', $q['praticienId']), $response, ['praticienId' => $q['praticienId']]);
+            });
+            $app->get('/{rdvId}', ConsulterRdvAction::class);
         });
     });
-
 
     return $app;
 };

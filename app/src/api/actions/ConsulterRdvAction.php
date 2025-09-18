@@ -17,6 +17,7 @@ final class ConsulterRdvAction
         $id = $args['rdvId'] ?? '';
         $dto = $this->service->getRdvById($id);
         if (!$dto) {
+            $response->getBody()->write(json_encode(['error' => 'No RDV found with this id']));
             return $response->withStatus(404);
         }
         $payload = json_encode($dto, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
