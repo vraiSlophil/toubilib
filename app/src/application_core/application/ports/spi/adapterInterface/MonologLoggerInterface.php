@@ -6,7 +6,9 @@ interface MonologLoggerInterface
 {
 
     public function debug(string $message, array $context = []): void;
+
     public function log(string $level, string $message, array $context = []): void;
+
     public function error(string $message, array $context = []): void;
 
 }

@@ -1,12 +1,16 @@
 <?php
+
 namespace toubilib\api\actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 
 final class AfficherPraticienAction
 {
-    public function __construct(private ServicePraticienInterface $service) {}
+    public function __construct(private ServicePraticienInterface $service)
+    {
+    }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {

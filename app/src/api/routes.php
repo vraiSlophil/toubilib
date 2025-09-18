@@ -4,7 +4,11 @@ declare(strict_types=1);
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
+use toubilib\api\actions\AfficherPraticienAction;
+use toubilib\api\actions\ConsulterRdvAction;
+use toubilib\api\actions\ListerCreneauxPrisAction;
 use toubilib\api\actions\ListerPraticiensAction;
+use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 
 
 return function (App $app): App {
@@ -25,7 +29,7 @@ return function (App $app): App {
         if (!isset($q['praticienId'], $q['debut'], $q['fin'])) {
             return $response->withStatus(400);
         }
-        return (new ListerCreneauxPrisAction($app->getContainer()->get(ServiceRdvInterface::class)))
+        return new ListerCreneauxPrisAction($app->getContainer()->get(ServiceRdvInterface::class))
         ($request->withAttribute('praticienId', $q['praticienId']), $response, ['praticienId' => $q['praticienId']]);
     });
 

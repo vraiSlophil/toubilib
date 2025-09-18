@@ -2,13 +2,13 @@
 
 namespace toubilib\infra\repositories;
 
-
 use PDO;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\domain\entities\Praticien;
 use toubilib\core\domain\entities\Specialite;
 use toubilib\infra\adapters\MonologLogger;
+use toubilib\core\application\ports\api\dtos\PraticienDetailDTO;
 
 class PDOPraticienRepository implements PraticienRepositoryInterface
 {
@@ -74,7 +74,9 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
         $p = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$p) { return null; }
+        if (!$p) {
+            return null;
+        }
 
         $motifs = $this->fetchAllAssoc('SELECT m.id, m.libelle
                                         FROM praticien2motif pm

@@ -1,5 +1,7 @@
 <?php
+
 namespace toubilib\core\application\ports\spi\repositoryInterfaces;
+
 use DateTimeImmutable;
 use toubilib\core\domain\entities\Rdv;
 

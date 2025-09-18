@@ -2,6 +2,7 @@
 namespace toubilib\core\application\ports\api\dtos;
 
 use DateTimeInterface;
+use toubilib\core\domain\entities\Rdv;
 
 final class CreneauDTO
 {

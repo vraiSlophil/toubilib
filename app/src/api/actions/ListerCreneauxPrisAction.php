@@ -4,10 +4,13 @@ namespace toubilib\api\actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 
 final class ListerCreneauxPrisAction
 {
-    public function __construct(private ServiceRdvInterface $service) {}
+    public function __construct(private ServiceRdvInterface $service)
+    {
+    }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
