@@ -1,9 +1,12 @@
 <?php
-namespace App\Infrastructure\Repositories;
+namespace toubilib\infra\repositories;
 
-use App\ApplicationCore\Application\Ports\Spi\RepositoryInterfaces\RdvRepositoryInterface;
-use App\ApplicationCore\Domain\Entities\Rdv\Rdv;
+use DateTimeImmutable;
+use Exception;
 use PDO;
+use RuntimeException;
+use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use toubilib\core\domain\entities\Rdv;
 
 final class PDORDVRepository implements RdvRepositoryInterface
 {
@@ -42,16 +45,20 @@ final class PDORDVRepository implements RdvRepositoryInterface
 
     private function map(array $r): Rdv
     {
-        return new Rdv(
-            id: (string)$r['id'],
-            praticienId: (string)$r['praticien_id'],
-            patientId: (string)$r['patient_id'],
-            patientEmail: $r['patient_email'] ?? null,
-            debut: new \DateTimeImmutable((string)$r['date_heure_debut']),
-            dureeMinutes: (int)$r['duree'],
-            fin: $r['date_heure_fin'] ? new \DateTimeImmutable((string)$r['date_heure_fin']) : null,
-            status: (int)$r['status'],
-            motifVisite: $r['motif_visite'] ?? null
-        );
+        try {
+            return new Rdv(
+                id: (string)$r['id'],
+                praticienId: (string)$r['praticien_id'],
+                patientId: (string)$r['patient_id'],
+                patientEmail: $r['patient_email'] ?? null,
+                debut: new DateTimeImmutable((string)$r['date_heure_debut']),
+                dureeMinutes: (int)$r['duree'],
+                fin: $r['date_heure_fin'] ? new DateTimeImmutable((string)$r['date_heure_fin']) : null,
+                status: (int)$r['status'],
+                motifVisite: $r['motif_visite'] ?? null
+            );
+        } catch (Exception $e) {
+            throw new RuntimeException('Failed to map RDV entity from database row.', 0, $e);
+        }
     }
 }

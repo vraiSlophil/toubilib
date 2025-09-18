@@ -1,7 +1,7 @@
 <?php
-namespace App\ApplicationCore\Application\Ports\Api;
+namespace toubilib\core\application\ports\api\dtos;
 
-use App\ApplicationCore\Domain\Entities\Rdv\Rdv;
+use DateTimeInterface;
 
 final class CreneauDTO
 {
@@ -15,8 +15,8 @@ final class CreneauDTO
     {
         return new self(
             $e->getId(),
-            $e->getDebut()->format(\DateTimeInterface::ATOM),
-            $e->getFin()->format(\DateTimeInterface::ATOM)
+            $e->getDebut()->format(DateTimeInterface::ATOM),
+            $e->getFin()->format(DateTimeInterface::ATOM)
         );
     }
 }

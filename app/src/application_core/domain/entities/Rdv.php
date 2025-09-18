@@ -1,5 +1,5 @@
 <?php
-namespace App\ApplicationCore\Domain\Entities\Rdv;
+namespace toubilib\core\domain\entities;
 
 final class Rdv
 {

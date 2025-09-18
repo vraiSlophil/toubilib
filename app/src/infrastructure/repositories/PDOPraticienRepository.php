@@ -4,11 +4,10 @@ namespace toubilib\infra\repositories;
 
 
 use PDO;
-use Psr\Log\LoggerInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\domain\entities\praticien\Praticien;
-use toubilib\core\domain\entities\praticien\Specialite;
+use toubilib\core\domain\entities\Praticien;
+use toubilib\core\domain\entities\Specialite;
 use toubilib\infra\adapters\MonologLogger;
 
 class PDOPraticienRepository implements PraticienRepositoryInterface

@@ -2,6 +2,8 @@
 
 namespace toubilib\core\application\ports\spi\repositoryInterfaces;
 
+use toubilib\core\application\ports\api\dtos\PraticienDetailDTO;
+
 interface PraticienRepositoryInterface
 {
     public function getAllPraticiens(): array;

@@ -1,5 +1,5 @@
 <?php
-namespace App\ApplicationCore\Application\Ports\Api;
+namespace toubilib\core\application\ports\api\dtos;
 
 final class PraticienDetailDTO
 {

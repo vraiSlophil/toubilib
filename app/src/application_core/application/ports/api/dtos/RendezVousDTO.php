@@ -1,7 +1,5 @@
 <?php
-namespace App\ApplicationCore\Application\Ports\Api;
-
-use App\ApplicationCore\Domain\Entities\Rdv\Rdv;
+namespace toubilib\core\application\ports\api\dtos;
 
 final class RendezVousDTO
 {

@@ -1,11 +1,11 @@
 <?php
-namespace App\ApplicationCore\Application\Ports\Spi\RepositoryInterfaces;
-
-use App\ApplicationCore\Domain\Entities\Rdv\Rdv;
+namespace toubilib\core\application\ports\spi\repositoryInterfaces;
+use DateTimeImmutable;
+use toubilib\core\domain\entities\Rdv;
 
 interface RdvRepositoryInterface
 {
     public function getById(string $rdvId): ?Rdv;
 
-    public function listForPraticienBetween(string $praticienId, \DateTimeImmutable $debut, \DateTimeImmutable $fin): array; // of Rdv
+    public function listForPraticienBetween(string $praticienId, DateTimeImmutable $debut, DateTimeImmutable $fin): array;
 }

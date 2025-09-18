@@ -1,7 +1,6 @@
 <?php
-namespace App\Api\Actions;
+namespace toubilib\api\actions;
 
-use App\ApplicationCore\Application\Ports\Api\ServicePraticienInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
