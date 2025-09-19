@@ -26,7 +26,7 @@ class ServicePraticien implements ServicePraticienInterface
        $praticiens = $this->praticienRepository->getAllPraticiens();
 
         return array_map(
-            fn($praticien) => new PraticienDTO($praticien),
+            fn($praticien) => PraticienDTO::fromEntity($praticien),
             $praticiens
         );
     }
@@ -36,6 +36,6 @@ class ServicePraticien implements ServicePraticienInterface
     {
         $detail = $this->praticienRepository->findDetailById($id);
         $this->MonologLogger->debug(print_r($detail, true));
-        return $detail ? new PraticienDetailDTO($detail) : null;
+        return $detail ? PraticienDetailDTO::fromEntity($detail) : null;
     }
 }

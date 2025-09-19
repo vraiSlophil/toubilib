@@ -10,36 +10,44 @@ use toubilib\core\domain\entities\Structure;
 final class PraticienDetailDTO
 {
 
-    public string $id;
-    public string $nom;
-    public string $prenom;
-    public string $titre;
-    public string $email;
-    public string $telephone;
-    public string $ville;
-    public ?string $rppsId;
-    public bool $organisation;
-    public bool $nouveauPatient;
-    public SpecialiteDTO $specialite;
-    public StructureDTO $structure;
-    public array $motifs;
-    public array $moyens;
-
-    public function __construct(PraticienDetail $praticien)
+    public function __construct(
+        public string        $id,
+        public string        $nom,
+        public string        $prenom,
+        public string        $titre,
+        public string        $email,
+        public string        $telephone,
+        public string        $ville,
+        public ?string       $rppsId,
+        public bool          $organisation,
+        public bool          $nouveauPatient,
+        public SpecialiteDTO $specialite,
+        public StructureDTO  $structure,
+        public array         $motifs,
+        public array         $moyens
+    )
     {
-        $this->id = $praticien->getId();
-        $this->nom = $praticien->getNom();
-        $this->prenom = $praticien->getPrenom();
-        $this->titre = $praticien->getTitre();
-        $this->email = $praticien->getEmail();
-        $this->telephone = $praticien->getTelephone();
-        $this->ville = $praticien->getVille();
-        $this->rppsId = $praticien->getRppsId();
-        $this->organisation = $praticien->isOrganisation();
-        $this->nouveauPatient = $praticien->isNouveauPatient();
-        $this->specialite = SpecialiteDTO::fromEntity($praticien->getSpecialite()) ?? null;
-        $this->structure = StructureDTO::fromEntity($praticien->getStructure());
-        $this->motifs = array_map(fn(MotifVisite $m) => MotifVisiteDTO::fromEntity($m), $praticien->getMotifs());
-        $this->moyens = array_map(fn(MoyenPaiement $m) => MoyenPaiementDTO::fromEntity($m), $praticien->getMoyens());
+
     }
+
+    public static function fromEntity(PraticienDetail $praticien): self
+    {
+        return new self(
+            $praticien->getId(),
+            $praticien->getNom(),
+            $praticien->getPrenom(),
+            $praticien->getTitre(),
+            $praticien->getEmail(),
+            $praticien->getTelephone(),
+            $praticien->getVille(),
+            $praticien->getRppsId(),
+            $praticien->isOrganisation(),
+            $praticien->isNouveauPatient(),
+            SpecialiteDTO::fromEntity($praticien->getSpecialite()) ?? null,
+            StructureDTO::fromEntity($praticien->getStructure()),
+            array_map(fn(MotifVisite $m) => MotifVisiteDTO::fromEntity($m), $praticien->getMotifs()),
+            array_map(fn(MoyenPaiement $m) => MoyenPaiementDTO::fromEntity($m), $praticien->getMoyens())
+        );
+    }
+
 }
