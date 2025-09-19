@@ -5,6 +5,7 @@ namespace toubilib\api\actions;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
+use toubilib\infra\adapters\SlimStyleOutputFormatter;
 
 final class ConsulterRdvAction
 {
@@ -17,11 +18,16 @@ final class ConsulterRdvAction
         $id = $args['rdvId'] ?? '';
         $dto = $this->service->getRdvById($id);
         if (!$dto) {
-            $response->getBody()->write(json_encode(['error' => 'No RDV found with this id']));
-            return $response->withStatus(404);
+            return SlimStyleOutputFormatter::error(
+                $response,
+                'Rdv not found',
+                null,
+                404
+            );
         }
-        $payload = json_encode($dto, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
+        return SlimStyleOutputFormatter::success(
+            $response,
+            $dto
+        );
     }
 }

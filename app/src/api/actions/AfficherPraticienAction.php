@@ -5,6 +5,7 @@ namespace toubilib\api\actions;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
+use toubilib\infra\adapters\SlimStyleOutputFormatter;
 
 final class AfficherPraticienAction
 {
@@ -17,7 +18,12 @@ final class AfficherPraticienAction
         $id = $args['praticienId'] ?? '';
         $dto = $this->service->getPraticienDetail($id);
         if (!$dto) {
-            return $response->withStatus(404);
+            return SlimStyleOutputFormatter::error(
+                $response,
+                'Praticien not found',
+                null,
+                404
+            );
         }
         $payload = json_encode($dto, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $response->getBody()->write($payload);

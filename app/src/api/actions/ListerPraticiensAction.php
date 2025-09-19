@@ -6,6 +6,7 @@ use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
+use toubilib\infra\adapters\SlimStyleOutputFormatter;
 
 class ListerPraticiensAction
 {
@@ -21,17 +22,18 @@ class ListerPraticiensAction
         try {
             $praticiens = $this->servicePraticien->listerPraticiens();
 
-            $response->getBody()->write(json_encode($praticiens));
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(200);
+            return SlimStyleOutputFormatter::success(
+                $response,
+                $praticiens
+            );
 
         } catch (Exception $e) {
-            $error = ['error' => 'Erreur lors de la récupération des praticiens'];
-            $response->getBody()->write(json_encode($error));
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(500);
+            return SlimStyleOutputFormatter::error(
+                $response,
+                'An error occurred while fetching praticiens.',
+                $e,
+                500
+            );
         }
     }
 }

@@ -14,7 +14,8 @@ return [
     // --- Services ---
     ServicePraticienInterface::class => static function ($c) {
         return new ServicePraticien(
-            $c->get(PraticienRepositoryInterface::class)
+            $c->get(PraticienRepositoryInterface::class),
+            $c->get(MonologLoggerInterface::class)
         );
     },
     ServiceRdvInterface::class => static function ($c) {

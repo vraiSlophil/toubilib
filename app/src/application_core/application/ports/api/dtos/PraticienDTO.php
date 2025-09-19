@@ -2,6 +2,8 @@
 
 namespace toubilib\core\application\ports\api\dtos;
 
+use toubilib\core\domain\entities\Praticien;
+
 class PraticienDTO
 {
     public string $id;
@@ -12,21 +14,13 @@ class PraticienDTO
     public string $specialite;
     public bool $accepteNouveauPatient;
 
-    public function __construct(
-        string $id,
-        string $nom,
-        string $prenom,
-        string $ville,
-        string $titre,
-        string $specialite,
-        bool $accepteNouveauPatient
-    ) {
-        $this->id = $id;
-        $this->nom = $nom;
-        $this->prenom = $prenom;
-        $this->ville = $ville;
-        $this->titre = $titre;
-        $this->specialite = $specialite;
-        $this->accepteNouveauPatient = $accepteNouveauPatient;
+    public function __construct(Praticien $praticien) {
+        $this->id = $praticien->getId();
+        $this->nom = $praticien->getNom();
+        $this->prenom = $praticien->getPrenom();
+        $this->ville = $praticien->getVille();
+        $this->titre = $praticien->getTitre();
+        $this->specialite = $praticien->getSpecialite()->getLibelle();
+        $this->accepteNouveauPatient = $praticien->isAccepteNouveauPatient();
     }
 }
