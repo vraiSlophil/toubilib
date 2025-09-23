@@ -25,17 +25,25 @@ final class PDORDVRepository implements RdvRepositoryInterface
     public function listForPraticienBetween(string $praticienId, \DateTimeImmutable $debut, \DateTimeImmutable $fin): array
     {
         $sql = 'SELECT id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, status, motif_visite
-                FROM rdv
-                WHERE praticien_id = :pid
-                  AND date_heure_debut < :fin
+                FROM rdv 
+                WHERE ';
+
+        $sql .= $praticienId !== ''
+            ? 'praticien_id = :pid AND '
+            : '';
+
+        $sql .= 'date_heure_debut < :fin
                   AND (date_heure_fin IS NULL OR date_heure_fin > :debut)
                 ORDER BY date_heure_debut ASC';
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':pid'   => $praticienId,
+        $params = [
             ':debut' => $debut->format('Y-m-d H:i:sP'),
             ':fin'   => $fin->format('Y-m-d H:i:sP'),
-        ]);
+        ];
+        if ($praticienId !== '') {
+            $params[':pid'] = $praticienId;
+        }
+        $stmt->execute($params);
         $out = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $out[] = $this->map($row);

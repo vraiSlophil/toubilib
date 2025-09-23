@@ -29,11 +29,17 @@ return function (App $app): App {
         $app->group('/rdvs', function (RouteCollectorProxy $app) {
             $app->get('', function ($request, $response) use ($app) {
                 $q = $request->getQueryParams();
-                if (!isset($q['praticienId'], $q['debut'], $q['fin'])) {
-                    return $response->withStatus(400);
+                // Si un praticien est fourni, déléguer à la méthode existante de /api/praticiens/{id}/rdvs
+                $action = $app->getContainer()->get(ListerCreneauxPrisAction::class);
+                if (!empty($q['praticienId'])) {
+                    return $action(
+                        $request->withAttribute('praticienId', $q['praticienId']),
+                        $response,
+                        ['praticienId' => $q['praticienId']]
+                    );
                 }
-                return new ListerCreneauxPrisAction($app->getContainer()->get(ServiceRdvInterface::class))
-                ($request->withAttribute('praticienId', $q['praticienId']), $response, ['praticienId' => $q['praticienId']]);
+                // Sinon, retourner la liste de tous les rendez-vous disponibles pour la plage donnée
+                return $action($request, $response, []);
             });
             $app->get('/{rdvId}', ConsulterRdvAction::class);
         });
