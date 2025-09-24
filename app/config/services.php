@@ -20,7 +20,8 @@ return [
     },
     ServiceRdvInterface::class => static function ($c) {
         return new ServiceRdv(
-            $c->get(RdvRepositoryInterface::class)
+            $c->get(RdvRepositoryInterface::class),
+            $c->get(PraticienRepositoryInterface::class)
         );
     },
 
@@ -28,7 +29,8 @@ return [
     PraticienRepositoryInterface::class => static function ($c) {
         return new PDOPraticienRepository(
             $c->get('db.praticien'),
-            $c->get(MonologLoggerInterface::class)
+            $c->get(MonologLoggerInterface::class),
+            $c->get(RdvRepositoryInterface::class)
         );
     },
 

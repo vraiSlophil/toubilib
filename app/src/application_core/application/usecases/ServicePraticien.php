@@ -33,7 +33,6 @@ class ServicePraticien implements ServicePraticienInterface
     public function getPraticienDetail(string $id): ?PraticienDetailDTO
     {
         $detail = $this->praticienRepository->findDetailById($id);
-        $this->MonologLogger->debug(print_r($detail, true));
         return $detail ? PraticienDetailDTO::fromEntity($detail) : null;
     }
 }

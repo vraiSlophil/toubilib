@@ -11,5 +11,7 @@ interface RdvRepositoryInterface
 
     public function listForPraticienBetween(string $praticienId, DateTimeImmutable $debut, DateTimeImmutable $fin): array;
 
+    public function listAllForPraticien(string $praticienId): array;
+
     public function create(Rdv $rdv): void;
 }

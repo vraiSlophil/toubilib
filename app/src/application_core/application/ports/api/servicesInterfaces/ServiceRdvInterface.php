@@ -10,5 +10,5 @@ interface ServiceRdvInterface
 
     public function listCreneauxPris(string $praticienId, \DateTimeImmutable $debut, \DateTimeImmutable $fin): array;
 
-    public function creerRdv(InputRendezVousDTO $rdvDto): string;
+    public function creerRdv(InputRendezVousDTO $input): string;
 }

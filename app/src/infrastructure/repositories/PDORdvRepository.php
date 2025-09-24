@@ -52,6 +52,15 @@ final class PDORdvRepository implements RdvRepositoryInterface
         return $out;
     }
 
+    public function listAllForPraticien(string $praticienId): array
+    {
+        $debut = new DateTimeImmutable('0001-01-01 00:00:00');
+        $fin   = new DateTimeImmutable('9999-12-31 23:59:59');
+
+        return $this->listForPraticienBetween($praticienId, $debut, $fin);
+    }
+
+
     private function map(array $r): Rdv
     {
         try {
@@ -74,17 +83,6 @@ final class PDORdvRepository implements RdvRepositoryInterface
 
     public function create(Rdv $rdv): void
     {
-//        "id"               character varying(64) NOT NULL,
-//        "praticien_id"     character varying(64) NOT NULL,
-//        "patient_id"       character varying(64) NOT NULL,
-//        "patient_email"    character varying(128),
-//        "date_heure_debut" timestamp             NOT NULL,
-//        "status"           smallint DEFAULT '0'  NOT NULL,
-//        "duree"            smallint DEFAULT '30' NOT NULL,
-//        "date_heure_fin"   timestamp,
-//        "date_creation"    timestamp,
-//        "motif_visite"     character varying(128)
-
         $sql = 'INSERT INTO rdv (id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, date_creation, motif_visite)
                 VALUES (:id, :praticien_id, :patient_id, :patient_email, :date_heure_debut, :duree, :date_heure_fin, :date_creation, :motif_visite)';
         $stmt = $this->pdo->prepare($sql);

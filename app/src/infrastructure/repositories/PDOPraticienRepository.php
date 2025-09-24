@@ -15,15 +15,12 @@ use toubilib\core\domain\entities\PraticienDetail;
 
 class PDOPraticienRepository implements PraticienRepositoryInterface
 {
-
-    private PDO $pdo;
-    private MonologLogger $logger;
-
-
-    public function __construct(PDO $pdo, MonologLoggerInterface $logger)
+    public function __construct(
+        private PDO                    $pdo,
+        private MonologLoggerInterface $logger,
+        private PDORdvRepository       $rdvRepository
+    )
     {
-        $this->pdo = $pdo;
-        $this->logger = $logger;
     }
 
     public function getAllPraticiens(): array
@@ -118,6 +115,8 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
             $moyensRows
         );
 
+        $rdvs = $this->rdvRepository->listAllForPraticien($id);
+
         return new PraticienDetail(
             id: (string)$p['id'],
             nom: (string)$p['nom'],
@@ -132,7 +131,8 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
             specialite: $specialite,
             structure: $structure,
             motifs: $motifs,
-            moyens: $moyens
+            moyens: $moyens,
+            rdvs: $rdvs
         );
     }
 
