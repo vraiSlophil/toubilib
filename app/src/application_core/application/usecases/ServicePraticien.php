@@ -3,12 +3,11 @@
 namespace toubilib\core\application\usecases;
 
 
-use toubilib\core\application\ports\api\dtos\PraticienDTO;
+use toubilib\core\application\ports\api\dtos\outputs\PraticienDetailDTO;
+use toubilib\core\application\ports\api\dtos\outputs\PraticienDTO;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
-use toubilib\core\application\ports\api\dtos\PraticienDetailDTO;
-use toubilib\infra\adapters\MonologLogger;
 
 class ServicePraticien implements ServicePraticienInterface
 {
@@ -31,8 +30,7 @@ class ServicePraticien implements ServicePraticienInterface
         );
     }
 
-    public function
-    getPraticienDetail(string $id): ?PraticienDetailDTO
+    public function getPraticienDetail(string $id): ?PraticienDetailDTO
     {
         $detail = $this->praticienRepository->findDetailById($id);
         $this->MonologLogger->debug(print_r($detail, true));

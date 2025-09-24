@@ -2,7 +2,7 @@
 
 namespace toubilib\core\application\ports\api\servicesInterfaces;
 
-use toubilib\core\application\ports\api\dtos\PraticienDetailDTO;
+use toubilib\core\application\ports\api\dtos\outputs\PraticienDetailDTO;
 
 interface ServicePraticienInterface
 {

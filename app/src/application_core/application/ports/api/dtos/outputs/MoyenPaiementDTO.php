@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\core\application\ports\api\dtos;
+namespace toubilib\core\application\ports\api\dtos\outputs;
 // PHP
 use JsonSerializable;
 use toubilib\core\domain\entities\MoyenPaiement;

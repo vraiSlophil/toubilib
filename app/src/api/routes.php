@@ -7,8 +7,10 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use toubilib\api\actions\AfficherPraticienAction;
 use toubilib\api\actions\ConsulterRdvAction;
+use toubilib\api\actions\CreerRdvAction;
 use toubilib\api\actions\ListerCreneauxPrisAction;
 use toubilib\api\actions\ListerPraticiensAction;
+use toubilib\api\middlewares\InputRdvHydrationMiddleware;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 
 
@@ -27,6 +29,7 @@ return function (App $app): App {
             });
         });
         $app->group('/rdvs', function (RouteCollectorProxy $app) {
+            $app->post('', CreerRdvAction::class)->add(InputRdvHydrationMiddleware::class);
             $app->get('', function ($request, $response) use ($app) {
                 $q = $request->getQueryParams();
                 // Si un praticien est fourni, déléguer à la méthode existante de /api/praticiens/{id}/rdvs

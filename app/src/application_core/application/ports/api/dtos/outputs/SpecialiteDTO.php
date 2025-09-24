@@ -1,6 +1,6 @@
 <?php
 // toubilib/src/application_core/application/ports/api/dtos/SpecialiteDTO.php
-namespace toubilib\core\application\ports\api\dtos;
+namespace toubilib\core\application\ports\api\dtos\outputs;
 
 use JsonSerializable;
 use toubilib\core\domain\entities\Specialite;

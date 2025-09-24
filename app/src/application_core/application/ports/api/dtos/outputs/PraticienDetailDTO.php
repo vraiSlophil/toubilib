@@ -1,11 +1,10 @@
 <?php
 
-namespace toubilib\core\application\ports\api\dtos;
+namespace toubilib\core\application\ports\api\dtos\outputs;
 
 use toubilib\core\domain\entities\MotifVisite;
 use toubilib\core\domain\entities\MoyenPaiement;
 use toubilib\core\domain\entities\PraticienDetail;
-use toubilib\core\domain\entities\Structure;
 
 final class PraticienDetailDTO
 {

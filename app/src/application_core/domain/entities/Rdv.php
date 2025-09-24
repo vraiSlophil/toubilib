@@ -3,6 +3,8 @@
 namespace toubilib\core\domain\entities;
 
 use DateTimeImmutable;
+use Ramsey\Uuid\Uuid;
+use toubilib\core\application\ports\api\servicesInterfaces\InputRendezVousDTO;
 
 final class Rdv
 {
@@ -14,15 +16,32 @@ final class Rdv
         private DateTimeImmutable  $debut,
         private int                $dureeMinutes,
         private ?DateTimeImmutable $fin,
+        private DateTimeImmutable  $dateCreation,
         private int                $status,
         private ?string            $motifVisite
     )
     {
     }
 
+    public static function fromInputDTO(InputRendezVousDTO $inputRendezVousDTO): self
+    {
+        return new self(
+            Uuid::uuid7()->toString(),
+            $inputRendezVousDTO->praticienId,
+            $inputRendezVousDTO->patientId,
+            $inputRendezVousDTO->patientEmail,
+            $inputRendezVousDTO->debut,
+            $inputRendezVousDTO->dureeMinutes,
+            new DateTimeImmutable()->modify('+' . $inputRendezVousDTO->dureeMinutes . ' minutes'),
+            new DateTimeImmutable(),
+            0,
+            $inputRendezVousDTO->motifVisite
+        );
+    }
+
     public function getId(): string
     {
-        return $line = $this->id;
+        return $this->id;
     }
 
     public function getPraticienId(): string
@@ -56,6 +75,11 @@ final class Rdv
             return $this->fin;
         }
         return $this->debut->modify('+' . $this->dureeMinutes . ' minutes');
+    }
+
+    public function getDateCreation(): DateTimeImmutable
+    {
+        return $this->dateCreation;
     }
 
     public function getStatus(): int

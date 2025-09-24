@@ -4,11 +4,12 @@ namespace toubilib\infra\repositories;
 use DateTimeImmutable;
 use Exception;
 use PDO;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
 use toubilib\core\domain\entities\Rdv;
 
-final class PDORDVRepository implements RdvRepositoryInterface
+final class PDORdvRepository implements RdvRepositoryInterface
 {
     public function __construct(private PDO $pdo) {}
 
@@ -24,7 +25,7 @@ final class PDORDVRepository implements RdvRepositoryInterface
 
     public function listForPraticienBetween(string $praticienId, \DateTimeImmutable $debut, \DateTimeImmutable $fin): array
     {
-        $sql = 'SELECT id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, status, motif_visite
+        $sql = 'SELECT id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, date_creation, status, motif_visite
                 FROM rdv 
                 WHERE ';
 
@@ -62,11 +63,41 @@ final class PDORDVRepository implements RdvRepositoryInterface
                 debut: new DateTimeImmutable((string)$r['date_heure_debut']),
                 dureeMinutes: (int)$r['duree'],
                 fin: $r['date_heure_fin'] ? new DateTimeImmutable((string)$r['date_heure_fin']) : null,
+                dateCreation: isset($r['date_creation']) ? new DateTimeImmutable((string)$r['date_creation']) : new DateTimeImmutable(),
                 status: (int)$r['status'],
                 motifVisite: $r['motif_visite'] ?? null
             );
         } catch (Exception $e) {
             throw new RuntimeException('Failed to map RDV entity from database row.', 0, $e);
         }
+    }
+
+    public function create(Rdv $rdv): void
+    {
+//        "id"               character varying(64) NOT NULL,
+//        "praticien_id"     character varying(64) NOT NULL,
+//        "patient_id"       character varying(64) NOT NULL,
+//        "patient_email"    character varying(128),
+//        "date_heure_debut" timestamp             NOT NULL,
+//        "status"           smallint DEFAULT '0'  NOT NULL,
+//        "duree"            smallint DEFAULT '30' NOT NULL,
+//        "date_heure_fin"   timestamp,
+//        "date_creation"    timestamp,
+//        "motif_visite"     character varying(128)
+
+        $sql = 'INSERT INTO rdv (id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, date_creation, motif_visite)
+                VALUES (:id, :praticien_id, :patient_id, :patient_email, :date_heure_debut, :duree, :date_heure_fin, :date_creation, :motif_visite)';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':id'               => $rdv->getId(),
+            ':praticien_id'     => $rdv->getPraticienId(),
+            ':patient_id'       => $rdv->getPatientId(),
+            ':patient_email'    => $rdv->getPatientEmail(),
+            ':date_heure_debut' => $rdv->getDebut()->format('Y-m-d H:i:sP'),
+            ':duree'            => $rdv->getDureeMinutes(),
+            ':date_heure_fin'   => $rdv->getFin()?->format('Y-m-d H:i:sP'),
+            ':date_creation'    => date('Y-m-d H:i:sP'),
+            ':motif_visite'     => $rdv->getMotifVisite(),
+        ]);
     }
 }

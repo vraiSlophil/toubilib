@@ -8,7 +8,7 @@ use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterf
 use toubilib\core\application\usecases\ServicePraticien;
 use toubilib\core\application\usecases\ServiceRdv;
 use toubilib\infra\repositories\PDOPraticienRepository;
-use toubilib\infra\repositories\PDORDVRepository;
+use toubilib\infra\repositories\PDORdvRepository;
 
 return [
     // --- Services ---

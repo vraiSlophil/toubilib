@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\core\application\ports\api\dtos;
+namespace toubilib\core\application\ports\api\dtos\outputs;
 
 use toubilib\core\domain\entities\Rdv;
 
