@@ -2,6 +2,7 @@
 
 namespace toubilib\core\application\ports\api\servicesInterfaces;
 
+use toubilib\core\application\ports\api\dtos\inputs\InputRendezVousDTO;
 use toubilib\core\application\ports\api\dtos\outputs\RendezVousDTO;
 
 interface ServiceRdvInterface

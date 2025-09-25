@@ -1,6 +1,6 @@
 <?php
 
-namespace toubilib\core\application\ports\api\servicesInterfaces;
+namespace toubilib\core\application\ports\api\dtos\inputs;
 
 use DateTimeImmutable;
 use InvalidArgumentException;

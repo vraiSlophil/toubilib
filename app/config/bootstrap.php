@@ -47,7 +47,7 @@ $errorMw = $app->addErrorMiddleware(
 );
 $errorMw->getDefaultErrorHandler()->forceContentType('application/json');
 
-$app->add(InputRdvHydrationMiddleware::class);
+//$app->add(InputRdvHydrationMiddleware::class);
 
 $app = (require __DIR__ . '/../src/api/routes.php')($app);
 

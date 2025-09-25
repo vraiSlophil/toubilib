@@ -2,10 +2,11 @@
 
 namespace toubilib\core\application\usecases;
 
+use DateTimeImmutable;
 use InvalidArgumentException;
+use toubilib\core\application\ports\api\dtos\inputs\InputRendezVousDTO;
 use toubilib\core\application\ports\api\dtos\outputs\CreneauDTO;
 use toubilib\core\application\ports\api\dtos\outputs\RendezVousDTO;
-use toubilib\core\application\ports\api\servicesInterfaces\InputRendezVousDTO;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
@@ -27,7 +28,7 @@ final class ServiceRdv implements ServiceRdvInterface
         return $rdv ? RendezVousDTO::fromEntity($rdv) : null;
     }
 
-    public function listCreneauxPris(string $praticienId, \DateTimeImmutable $debut, \DateTimeImmutable $fin): array
+    public function listCreneauxPris(string $praticienId, DateTimeImmutable $debut, DateTimeImmutable $fin): array
     {
         $rdvs = $this->rdvRepository->listForPraticienBetween($praticienId, $debut, $fin);
         return array_map(static fn($e) => CreneauDTO::fromRdv($e), $rdvs);

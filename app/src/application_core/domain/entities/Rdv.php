@@ -4,7 +4,7 @@ namespace toubilib\core\domain\entities;
 
 use DateTimeImmutable;
 use Ramsey\Uuid\Uuid;
-use toubilib\core\application\ports\api\servicesInterfaces\InputRendezVousDTO;
+use toubilib\core\application\ports\api\dtos\inputs\InputRendezVousDTO;
 
 final class Rdv
 {

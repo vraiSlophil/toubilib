@@ -8,16 +8,17 @@ use toubilib\core\application\ports\api\dtos\outputs\PraticienDTO;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use toubilib\infra\adapters\MonologLogger;
 
 class ServicePraticien implements ServicePraticienInterface
 {
     private PraticienRepositoryInterface $praticienRepository;
-    private MonologLoggerInterface $MonologLogger;
+    private MonologLoggerInterface $monologLogger;
 
     public function __construct(PraticienRepositoryInterface $praticienRepository, MonologLoggerInterface $MonologLogger)
     {
         $this->praticienRepository = $praticienRepository;
-        $this->MonologLogger = $MonologLogger;
+        $this->monologLogger = $MonologLogger;
     }
 
     public function listerPraticiens(): array
@@ -33,6 +34,7 @@ class ServicePraticien implements ServicePraticienInterface
     public function getPraticienDetail(string $id): ?PraticienDetailDTO
     {
         $detail = $this->praticienRepository->findDetailById($id);
+        $this->monologLogger->debug(print_r($detail, true));
         return $detail ? PraticienDetailDTO::fromEntity($detail) : null;
     }
 }

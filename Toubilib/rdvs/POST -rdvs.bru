@@ -6,8 +6,19 @@ meta {
 
 post {
   url: {{API_SRC}}/rdvs
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "praticienId": "4305f5e9-be5a-4ccf-8792-7e07d7017363",
+    "patientId": "d975aca7-50c5-3d16-b211-cf7d302cba50",
+    "patientEmail": "Denis.Teixeira@hotmail.fr",
+    "debut": "2025-10-01T14:30:00+02:00",
+    "dureeMinutes": 30,
+    "motifVisite": "radiologie"
+  }
 }
 
 settings {
