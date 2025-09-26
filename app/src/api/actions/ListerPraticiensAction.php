@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\infra\adapters\SlimStyleOutputFormatter;
 
-class ListerPraticiensAction
+final class ListerPraticiensAction
 {
     private ServicePraticienInterface $servicePraticien;
 

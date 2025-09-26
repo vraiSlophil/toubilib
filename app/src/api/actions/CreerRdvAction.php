@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 use toubilib\infra\adapters\SlimStyleOutputFormatter;
 
-class CreerRdvAction
+final class CreerRdvAction
 {
     public function __construct(private ServiceRdvInterface $serviceRdv)
     {

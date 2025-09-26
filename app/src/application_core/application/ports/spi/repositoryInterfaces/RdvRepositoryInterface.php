@@ -14,4 +14,6 @@ interface RdvRepositoryInterface
     public function listAllForPraticien(string $praticienId): array;
 
     public function create(Rdv $rdv): void;
+
+    public function delete(string $rdvId): void; // suppression physique pour annulation
 }

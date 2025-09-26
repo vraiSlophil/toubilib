@@ -12,6 +12,7 @@ use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
 use toubilib\core\domain\entities\Rdv;
+use toubilib\core\domain\exceptions\RdvNotFoundException;
 
 
 final class ServiceRdv implements ServiceRdvInterface
@@ -81,5 +82,16 @@ final class ServiceRdv implements ServiceRdvInterface
         $this->rdvRepository->create($rdv);
 
         return $rdv->getId();
+    }
+
+    public function annulerRendezVous(string $rdvId): void
+    {
+        $rdv = $this->rdvRepository->getById($rdvId);
+        if ($rdv === null) {
+            throw new RdvNotFoundException("Rendez-vous not found");
+        }
+        $rdv->annuler();
+        $this->rdvRepository->delete($rdvId);
+        $this->logger->log('info', 'Rendez-vous annulé (supprimé)', ['rdv_id' => $rdvId]);
     }
 }

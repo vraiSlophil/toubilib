@@ -10,6 +10,7 @@ use toubilib\api\actions\ConsulterRdvAction;
 use toubilib\api\actions\CreerRdvAction;
 use toubilib\api\actions\ListerCreneauxPrisAction;
 use toubilib\api\actions\ListerPraticiensAction;
+use toubilib\api\actions\AnnulerRdvAction; // ajout
 use toubilib\api\middlewares\InputRdvHydrationMiddleware;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 
@@ -45,6 +46,7 @@ return function (App $app): App {
                 return $action($request, $response, []);
             });
             $app->get('/{rdvId}', ConsulterRdvAction::class);
+            $app->delete('/{rdvId}', AnnulerRdvAction::class); // nouvelle route
         });
     });
 

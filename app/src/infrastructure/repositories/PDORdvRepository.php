@@ -15,7 +15,7 @@ final class PDORdvRepository implements RdvRepositoryInterface
 
     public function getById(string $rdvId): ?Rdv
     {
-        $sql = 'SELECT id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, status, motif_visite
+        $sql = 'SELECT id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, date_creation, status, motif_visite
                 FROM rdv WHERE id = :id';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $rdvId]);
@@ -97,5 +97,11 @@ final class PDORdvRepository implements RdvRepositoryInterface
             ':date_creation'    => date('Y-m-d H:i:sP'),
             ':motif_visite'     => $rdv->getMotifVisite(),
         ]);
+    }
+
+    public function delete(string $rdvId): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM rdv WHERE id = :id');
+        $stmt->execute([':id' => $rdvId]);
     }
 }
