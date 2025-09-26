@@ -132,7 +132,7 @@ class PDOPraticienRepository implements PraticienRepositoryInterface
             structure: $structure,
             motifs: $motifs,
             moyens: $moyens,
-            rdvs: $rdvs
+//            rdvs: $rdvs
         );
     }
 

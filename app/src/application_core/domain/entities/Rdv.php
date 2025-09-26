@@ -32,7 +32,7 @@ final class Rdv
             $inputRendezVousDTO->patientEmail,
             $inputRendezVousDTO->debut,
             $inputRendezVousDTO->dureeMinutes,
-            new DateTimeImmutable()->modify('+' . $inputRendezVousDTO->dureeMinutes . ' minutes'),
+            $inputRendezVousDTO->debut->modify('+' . $inputRendezVousDTO->dureeMinutes . ' minutes'),
             new DateTimeImmutable(),
             0,
             $inputRendezVousDTO->motifVisite

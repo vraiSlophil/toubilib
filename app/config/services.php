@@ -21,7 +21,8 @@ return [
     ServiceRdvInterface::class => static function ($c) {
         return new ServiceRdv(
             $c->get(RdvRepositoryInterface::class),
-            $c->get(PraticienRepositoryInterface::class)
+            $c->get(PraticienRepositoryInterface::class),
+            $c->get(MonologLoggerInterface::class)
         );
     },
 

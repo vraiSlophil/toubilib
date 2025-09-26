@@ -5,7 +5,7 @@ use toubilib\infra\adapters\MonologLogger;
 
 return [
     'settings' => [
-        'displayErrorDetails' => true,
+        'displayErrorDetails' => false,
         'logError'            => true,
         'logErrorDetails'     => true,
         'logs_dir' => __DIR__ . '/../var/logs',

@@ -8,6 +8,7 @@ use toubilib\core\application\ports\api\dtos\inputs\InputRendezVousDTO;
 use toubilib\core\application\ports\api\dtos\outputs\CreneauDTO;
 use toubilib\core\application\ports\api\dtos\outputs\RendezVousDTO;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
+use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
 use toubilib\core\domain\entities\Rdv;
@@ -17,7 +18,8 @@ final class ServiceRdv implements ServiceRdvInterface
 {
     public function __construct(
         private RdvRepositoryInterface       $rdvRepository,
-        private PraticienRepositoryInterface $praticienRepository
+        private PraticienRepositoryInterface $praticienRepository,
+        private MonologLoggerInterface      $logger
     )
     {
     }
@@ -40,7 +42,37 @@ final class ServiceRdv implements ServiceRdvInterface
         if ($praticien === null) {
             throw new InvalidArgumentException("Praticien not found");
         }
+
+        if (!$praticien->isValidMotifVisite($input->motifVisite)) {
+            throw new InvalidArgumentException("Motif de visite invalide pour ce praticien");
+        }
+
         $rdvFin = $input->debut->modify('+' . $input->dureeMinutes . ' minutes');
+
+        // Maintenant toutes les dates sont en UTC, pas besoin de conversion
+        $rdvsExistants = $this->rdvRepository->listForPraticienBetween(
+            $input->praticienId,
+            $input->debut->modify('-1 minute'),
+            $rdvFin->modify('+1 minute')
+        );
+
+        if (!empty($rdvsExistants)) {
+            foreach ($rdvsExistants as $rdvExistant) {
+                $rdvExistantDebut = $rdvExistant->getDebut();
+                $rdvExistantFin = $rdvExistant->getFin();
+
+                // Algorithme simple de détection de chevauchement
+                if ($rdvExistantDebut < $rdvFin && $rdvExistantFin > $input->debut) {
+                    throw new InvalidArgumentException(
+                        "Conflit détecté : un rendez-vous existe déjà de " .
+                        $rdvExistantDebut->format('Y-m-d H:i:s') . " à " .
+                        $rdvExistantFin->format('Y-m-d H:i:s')
+                    );
+                }
+            }
+        }
+
+        // Vérification des créneaux d'ouverture (horaires praticien)
         if (!$praticien->isAvailable($input->debut, $rdvFin)) {
             throw new InvalidArgumentException("Praticien not available");
         }

@@ -29,7 +29,7 @@ return [
 
     ListerCreneauxPrisAction::class => static function ($c) {
         return new ListerCreneauxPrisAction(
-            $c->get(ServiceRdvInterface::class)
+            $c->get(ServiceRdvInterface::class),
         );
     }
 

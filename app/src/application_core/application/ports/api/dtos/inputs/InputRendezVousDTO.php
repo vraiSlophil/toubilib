@@ -3,6 +3,7 @@
 namespace toubilib\core\application\ports\api\dtos\inputs;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use InvalidArgumentException;
 use Throwable;
 
@@ -22,7 +23,14 @@ final class InputRendezVousDTO
         $debutStr = (string)($data['debut'] ?? '');
         try {
             $debut = new DateTimeImmutable($debutStr);
-        } catch (Throwable) {
+
+            // IMPORTANT : Convertir l'heure locale vers UTC en gardant la même heure
+            // Si on reçoit 14:30+02:00, on veut 14:30+00:00 (pas 12:30+00:00)
+            $debutLocal = $debut->format('Y-m-d H:i:s');
+            $debut = new DateTimeImmutable($debutLocal, new DateTimeZone('UTC'));
+
+        }
+        catch (Throwable) {
             throw new InvalidArgumentException('Must be an ISO-8601 valid date string');
         }
 

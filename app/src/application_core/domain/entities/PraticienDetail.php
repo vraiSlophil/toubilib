@@ -7,7 +7,6 @@ use InvalidArgumentException;
 
 final class PraticienDetail
 {
-    private array $rdvs;
 
     public function __construct(
         private string     $id,
@@ -26,10 +25,8 @@ final class PraticienDetail
         private array      $motifs,
         /** @var MoyenPaiement[] */
         private array      $moyens,
-        array $rdvs = []
     )
     {
-        $this->rdvs = $rdvs;
     }
 
     public function getId(): string
@@ -104,19 +101,6 @@ final class PraticienDetail
         return $this->moyens;
     }
 
-    public function setRendezVous(array $rdvs): void
-    {
-        $this->rdvs = [];
-        foreach ($rdvs as $rdv) {
-            if (!$rdv instanceof Rdv) {
-                throw new InvalidArgumentException('Each element of $rdvs must be an instance of Rdv');
-            }
-            if ($rdv->getPraticienId() === $this->id) {
-                $this->rdvs[] = $rdv;
-            }
-        }
-    }
-
     public function isAvailable(DateTimeImmutable $debut, DateTimeImmutable $fin): bool
     {
         if ($fin <= $debut) {
@@ -129,27 +113,25 @@ final class PraticienDetail
 
         $jourSemaine = (int)$debut->format('N'); // 1=lundi, 7=dimanche
         if ($jourSemaine > 5) {
-            throw new InvalidArgumentException('The slot must be on a weekday (Monday to Friday)');
+            return false;
         }
 
         $debutJournee = $debut->setTime(8, 0, 0);
         $finJournee = $debut->setTime(19, 0, 0);
         if ($debut < $debutJournee || $fin > $finJournee) {
-            throw new InvalidArgumentException('The slot must be between 08:00 and 19:00');
+            return false;
         }
+        return true;
+    }
 
-        $rdvs = $this->rdvs ?? [];
-        foreach ($rdvs as $rdv) {
-            $rdvDebut = $rdv->getDebut();
-            $rdvFin = $rdv->getFin();
-
-            $overlap = ($rdvDebut < $fin) && ($rdvFin === null || $rdvFin > $debut);
-            if ($overlap) {
-                return false;
+    public function isValidMotifVisite(string $motifVisite): bool
+    {
+        foreach ($this->motifs as $motif) {
+            if ($motif->getLibelle() === $motifVisite) {
+                return true;
             }
         }
-
-        return true;
+        return false;
     }
 
 }
