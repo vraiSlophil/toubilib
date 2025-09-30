@@ -10,7 +10,7 @@ use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 
-class MonologLogger implements MonologLoggerInterface
+final class MonologLogger implements MonologLoggerInterface
 {
     private Logger $logger;
 

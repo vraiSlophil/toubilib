@@ -13,7 +13,7 @@ use toubilib\core\domain\entities\Structure;
 use toubilib\infra\adapters\MonologLogger;
 use toubilib\core\domain\entities\PraticienDetail;
 
-class PDOPraticienRepository implements PraticienRepositoryInterface
+final class PDOPraticienRepository implements PraticienRepositoryInterface
 {
     public function __construct(
         private PDO                    $pdo,

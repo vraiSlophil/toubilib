@@ -3,7 +3,7 @@
 namespace toubilib\core\domain\entities;
 
 
-class Praticien
+final class Praticien
 {
     private string $id;
     private string $nom;

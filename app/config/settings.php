@@ -11,30 +11,6 @@ return [
         'logs_dir' => __DIR__ . '/../var/logs',
     ],
 
-//    LoggerInterface::class => function (ContainerInterface $c) {
-//        $logsDir = __DIR__ . '/../var/logs';
-//
-//        if (!is_dir($logsDir)) {
-//            mkdir($logsDir, 0775, true);
-//        }
-//
-//        $logger = new Logger('app');
-//
-//        $infoStream = new StreamHandler($logsDir . '/logs.log', Logger::DEBUG);
-//        $infoFilter = new FilterHandler($infoStream, Logger::DEBUG, Logger::INFO);
-//
-//        $errorStream = new StreamHandler($logsDir . '/errors.log', Logger::WARNING);
-//
-//        $formatter = new LineFormatter(null, null, true, true);
-//        $infoStream->setFormatter($formatter);
-//        $errorStream->setFormatter($formatter);
-//
-//        $logger->pushHandler($infoFilter);
-//        $logger->pushHandler($errorStream);
-//
-//        return $logger;
-//    },
-
     'db.praticien' => static function (): PDO {
         $driver = $_ENV['prat.driver'];
         $host = $_ENV['prat.host'];

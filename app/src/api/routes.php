@@ -5,36 +5,33 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
-use toubilib\api\actions\AfficherPraticienAction;
-use toubilib\api\actions\ConsulterRdvAction;
-use toubilib\api\actions\CreerRdvAction;
-use toubilib\api\actions\ListerCreneauxPrisAction;
-use toubilib\api\actions\ListerPraticiensAction;
-use toubilib\api\actions\AnnulerRdvAction; // ajout
+use toubilib\api\actions\GetPraticienAction;
+use toubilib\api\actions\getRdvAction;
+use toubilib\api\actions\CreateRdvAction;
+use toubilib\api\actions\GetRootAction;
+use toubilib\api\actions\ListBookedSlotsAction;
+use toubilib\api\actions\ListPraticiensAction;
+use toubilib\api\actions\CancelRdvAction;
 use toubilib\api\middlewares\InputRdvHydrationMiddleware;
-use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 
 
 return function (App $app): App {
 
     $app->group('/api', function (RouteCollectorProxy $app) {
-        $app->get('/', function (Request $request, Response $response) {
-            $response->getBody()->write(json_encode('Bienvenue sur l\'API des praticiens !'));
-            return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
-        });
+        $app->get('/', GetRootAction::class);
         $app->group('/praticiens', function (RouteCollectorProxy $app) {
-            $app->get('', ListerPraticiensAction::class);
+            $app->get('', ListPraticiensAction::class);
             $app->group('/{praticienId}', function (RouteCollectorProxy $app) {
-                $app->get('', AfficherPraticienAction::class);
-                $app->get('/rdvs', ListerCreneauxPrisAction::class);
+                $app->get('', GetPraticienAction::class);
+                $app->get('/rdvs', ListBookedSlotsAction::class);
             });
         });
         $app->group('/rdvs', function (RouteCollectorProxy $app) {
-            $app->post('', CreerRdvAction::class)->add(InputRdvHydrationMiddleware::class);
+            $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class);
             $app->get('', function ($request, $response) use ($app) {
                 $q = $request->getQueryParams();
                 // Si un praticien est fourni, déléguer à la méthode existante de /api/praticiens/{id}/rdvs
-                $action = $app->getContainer()->get(ListerCreneauxPrisAction::class);
+                $action = $app->getContainer()->get(ListBookedSlotsAction::class);
                 if (!empty($q['praticienId'])) {
                     return $action(
                         $request->withAttribute('praticienId', $q['praticienId']),
@@ -45,8 +42,8 @@ return function (App $app): App {
                 // Sinon, retourner la liste de tous les rendez-vous disponibles pour la plage donnée
                 return $action($request, $response, []);
             });
-            $app->get('/{rdvId}', ConsulterRdvAction::class);
-            $app->delete('/{rdvId}', AnnulerRdvAction::class); // nouvelle route
+            $app->get('/{rdvId}', getRdvAction::class);
+            $app->delete('/{rdvId}', CancelRdvAction::class); // nouvelle route
         });
     });
 

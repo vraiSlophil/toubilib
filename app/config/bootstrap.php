@@ -6,8 +6,6 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
-use toubilib\api\middlewares\InputRdvHydrationMiddleware;
-use toubilib\infra\adapters\SlimStyleOutputFormatter;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -25,7 +23,6 @@ try {
 }
 
 AppFactory::setContainer($c);
-SlimStyleOutputFormatter::setContainer($c);
 $app = AppFactory::create();
 
 $app->addBodyParsingMiddleware();
@@ -47,7 +44,6 @@ $errorMw = $app->addErrorMiddleware(
 );
 $errorMw->getDefaultErrorHandler()->forceContentType('application/json');
 
-//$app->add(InputRdvHydrationMiddleware::class);
 
 $app = (require __DIR__ . '/../src/api/routes.php')($app);
 

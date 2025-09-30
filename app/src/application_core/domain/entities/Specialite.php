@@ -2,7 +2,7 @@
 
 namespace toubilib\core\domain\entities;
 
-class Specialite
+final class Specialite
 {
     private int $id;
     private string $libelle;

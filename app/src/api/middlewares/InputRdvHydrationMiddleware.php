@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response;
 use toubilib\core\application\ports\api\dtos\inputs\InputRendezVousDTO;
 use toubilib\infra\adapters\MonologLogger;
-use toubilib\infra\adapters\SlimStyleOutputFormatter;
+use toubilib\infra\adapters\ApiResponseBuilder;
 
 final class InputRdvHydrationMiddleware implements MiddlewareInterface
 {
@@ -30,28 +30,27 @@ final class InputRdvHydrationMiddleware implements MiddlewareInterface
         $this->logger->debug('Parsed body : ' . json_encode($parsed));
 
         if (!is_array($parsed)) {
-            return SlimStyleOutputFormatter::error(
-                new Response(400),
-                'Invalid request body: expected JSON object.'
-            );
+            return ApiResponseBuilder::create()
+                ->status(400)
+                ->error('Invalid request body: expected JSON object.')
+                ->build(new Response(400));
         }
 
         try {
             $dto = InputRendezVousDTO::fromArray($parsed);
         } catch (InvalidArgumentException $e) {
-            return SlimStyleOutputFormatter::error(
-                new Response(422),
-                'Invalid request body',
-                $e
-            );
+            return ApiResponseBuilder::create()
+                ->status(422)
+                ->error('Invalid request body', $e)
+                ->build(new Response(422));
         }
 
         $errors = $dto->validate();
         if (!empty($errors)) {
-            return SlimStyleOutputFormatter::error(
-                new Response(422),
-                'Validation errors : ' . json_encode($errors)
-            );
+            return ApiResponseBuilder::create()
+                ->status(422)
+                ->error('Validation errors : ' . json_encode($errors))
+                ->build(new Response(422));
         }
 
         return $handler->handle($request->withAttribute('input_rdv', $dto));

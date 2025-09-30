@@ -1,34 +1,34 @@
 <?php
 
-use toubilib\api\actions\AfficherPraticienAction;
-use toubilib\api\actions\ConsulterRdvAction;
-use toubilib\api\actions\ListerCreneauxPrisAction;
-use toubilib\api\actions\ListerPraticiensAction;
+use toubilib\api\actions\GetPraticienAction;
+use toubilib\api\actions\getRdvAction;
+use toubilib\api\actions\ListBookedSlotsAction;
+use toubilib\api\actions\ListPraticiensAction;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 
 return [
 
-    ListerPraticiensAction::class => static function ($c) {
-        return new ListerPraticiensAction(
+    ListPraticiensAction::class => static function ($c) {
+        return new ListPraticiensAction(
             $c->get(ServicePraticienInterface::class)
         );
     },
 
-    AfficherPraticienAction::class => static function ($c) {
-        return new AfficherPraticienAction(
+    GetPraticienAction::class => static function ($c) {
+        return new GetPraticienAction(
             $c->get(ServicePraticienInterface::class)
         );
     },
 
-    ConsulterRdvAction::class => static function ($c) {
-        return new ConsulterRdvAction(
+    getRdvAction::class => static function ($c) {
+        return new getRdvAction(
             $c->get(ServiceRdvInterface::class)
         );
     },
 
-    ListerCreneauxPrisAction::class => static function ($c) {
-        return new ListerCreneauxPrisAction(
+    ListBookedSlotsAction::class => static function ($c) {
+        return new ListBookedSlotsAction(
             $c->get(ServiceRdvInterface::class),
         );
     }
