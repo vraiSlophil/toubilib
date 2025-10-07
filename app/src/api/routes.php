@@ -1,12 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use toubilib\api\actions\GetPraticienAction;
-use toubilib\api\actions\getRdvAction;
+use toubilib\api\actions\GetRdvAction;
 use toubilib\api\actions\CreateRdvAction;
 use toubilib\api\actions\GetRootAction;
 use toubilib\api\actions\ListBookedSlotsAction;
@@ -42,7 +40,7 @@ return function (App $app): App {
                 // Sinon, retourner la liste de tous les rendez-vous disponibles pour la plage donnée
                 return $action($request, $response, []);
             });
-            $app->get('/{rdvId}', getRdvAction::class);
+            $app->get('/{rdvId}', GetRdvAction::class);
             $app->delete('/{rdvId}', CancelRdvAction::class); // nouvelle route
         });
     });

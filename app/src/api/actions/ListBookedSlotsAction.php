@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 use toubilib\infra\adapters\ApiResponseBuilder;
+use toubilib\infra\adapters\MonologLogger;
 
 final class ListBookedSlotsAction
 {
@@ -36,12 +37,11 @@ final class ListBookedSlotsAction
         }
 
         $slots = $this->service->listCreneauxPris($praticienId, $start, $end);
-
         $data = array_map(function ($dto) {
             $item = $dto->jsonSerialize();
             $item['_links'] = [
-                'rdv' => ['href' => '/api/rdvs/' . $item['rdv_id']],
-                'praticien' => ['href' => '/api/praticiens/' . $item['praticien_id']]
+                'rdv' => ['href' => '/api/rdvs/' . $item['rdvId']],
+                'praticien' => ['href' => '/api/praticiens/' . $item['praticienId']]
             ];
             return $item;
         }, $slots);

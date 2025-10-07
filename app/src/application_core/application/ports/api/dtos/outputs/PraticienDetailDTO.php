@@ -2,11 +2,12 @@
 
 namespace toubilib\core\application\ports\api\dtos\outputs;
 
+use JsonSerializable;
 use toubilib\core\domain\entities\MotifVisite;
 use toubilib\core\domain\entities\MoyenPaiement;
 use toubilib\core\domain\entities\PraticienDetail;
 
-final class PraticienDetailDTO
+final class PraticienDetailDTO implements JsonSerializable
 {
 
     public function __construct(
@@ -49,4 +50,23 @@ final class PraticienDetailDTO
         );
     }
 
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'nom' => $this->nom,
+            'prenom' => $this->prenom,
+            'titre' => $this->titre,
+            'email' => $this->email,
+            'telephone' => $this->telephone,
+            'ville' => $this->ville,
+            'rppsId' => $this->rppsId,
+            'organisation' => $this->organisation,
+            'nouveauPatient' => $this->nouveauPatient,
+            'specialite' => $this->specialite,
+            'structure' => $this->structure,
+            'motifs' => $this->motifs,
+            'moyens' => $this->moyens
+        ];
+    }
 }

@@ -80,9 +80,15 @@ final class ApiResponseBuilder implements ApiResponseBuilderInterface
         $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $response->getBody()->write($json ?: 'null');
         $response = $response->withStatus($this->status);
+
         foreach ($this->headers as $k => $v) {
+            $lower = strtolower($k);
+            if (str_starts_with($lower, 'access-control-') && $response->hasHeader($k)) {
+                continue;
+            }
             $response = $response->withHeader($k, $v);
         }
+
         return $response;
     }
 }

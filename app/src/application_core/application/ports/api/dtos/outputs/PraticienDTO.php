@@ -2,9 +2,10 @@
 
 namespace toubilib\core\application\ports\api\dtos\outputs;
 
+use JsonSerializable;
 use toubilib\core\domain\entities\Praticien;
 
-final class PraticienDTO
+final class PraticienDTO implements JsonSerializable
 {
     public function __construct(
         public string $id,
@@ -31,4 +32,17 @@ final class PraticienDTO
         );
     }
 
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'nom' => $this->nom,
+            'prenom' => $this->prenom,
+            'ville' => $this->ville,
+            'titre' => $this->titre,
+            'specialite' => $this->specialite,
+            'accepteNouveauPatient' => $this->accepteNouveauPatient,
+        ];
+    }
 }

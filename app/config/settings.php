@@ -11,6 +11,15 @@ return [
         'logs_dir' => __DIR__ . '/../var/logs',
     ],
 
+    'cors' => [
+        'allowed_origins' => explode(',', $_ENV['CORS_ORIGINS']),
+        'allowed_methods' => explode(',', $_ENV['CORS_METHODS']),
+        'allowed_headers' => explode(',', $_ENV['CORS_HEADERS']),
+        'exposed_headers' => explode(',', $_ENV['CORS_EXPOSED_HEADERS']),
+        'allow_credentials' => (bool) $_ENV['CORS_CREDENTIALS'],
+        'max_age' => (int) $_ENV['CORS_MAX_AGE'],
+    ],
+
     'db.praticien' => static function (): PDO {
         $driver = $_ENV['prat.driver'];
         $host = $_ENV['prat.host'];

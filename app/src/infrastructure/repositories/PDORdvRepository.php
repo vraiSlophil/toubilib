@@ -23,19 +23,17 @@ final class PDORdvRepository implements RdvRepositoryInterface
         return $row ? $this->map($row) : null;
     }
 
-    public function listForPraticienBetween(string $praticienId, \DateTimeImmutable $debut, \DateTimeImmutable $fin): array
+    public function listForPraticienBetween(string $praticienId, DateTimeImmutable $debut, DateTimeImmutable $fin): array
     {
         $sql = 'SELECT id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, date_creation, status, motif_visite
-                FROM rdv 
-                WHERE ';
-
-        $sql .= $praticienId !== ''
-            ? 'praticien_id = :pid AND '
-            : '';
-
+                FROM rdv WHERE ';
+        if ($praticienId !== '') {
+            $sql .= 'praticien_id = :pid AND ';
+        }
         $sql .= 'date_heure_debut < :fin
-                  AND (date_heure_fin IS NULL OR date_heure_fin > :debut)
-                ORDER BY date_heure_debut ASC';
+                 AND (date_heure_fin IS NULL OR date_heure_fin > :debut)
+                 ORDER BY date_heure_debut ASC';
+
         $stmt = $this->pdo->prepare($sql);
         $params = [
             ':debut' => $debut->format('Y-m-d H:i:sP'),
@@ -45,6 +43,7 @@ final class PDORdvRepository implements RdvRepositoryInterface
             $params[':pid'] = $praticienId;
         }
         $stmt->execute($params);
+
         $out = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $out[] = $this->map($row);
@@ -56,7 +55,6 @@ final class PDORdvRepository implements RdvRepositoryInterface
     {
         $debut = new DateTimeImmutable('0001-01-01 00:00:00');
         $fin   = new DateTimeImmutable('9999-12-31 23:59:59');
-
         return $this->listForPraticienBetween($praticienId, $debut, $fin);
     }
 

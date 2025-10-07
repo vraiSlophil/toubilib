@@ -2,9 +2,10 @@
 
 namespace toubilib\core\application\ports\api\dtos\outputs;
 
+use JsonSerializable;
 use toubilib\core\domain\entities\Rdv;
 
-final class RendezVousDTO
+final class RendezVousDTO implements JsonSerializable
 {
     public function __construct(
         public string  $id,
@@ -33,5 +34,20 @@ final class RendezVousDTO
             $e->getDureeMinutes(),
             $e->getMotifVisite()
         );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'praticienId' => $this->praticienId,
+            'patientId' => $this->patientId,
+            'patientEmail' => $this->patientEmail,
+            'debut' => $this->debut,
+            'fin' => $this->fin,
+            'status' => $this->status,
+            'duree' => $this->duree,
+            'motifVisite' => $this->motifVisite
+        ];
     }
 }

@@ -24,7 +24,7 @@ final class GetRdvAction
         $data = $dto->jsonSerialize();
         $links = [
             'self' => ['href' => '/api/rdvs/' . $id],
-            'praticien' => ['href' => '/api/praticiens/' . $data['praticien_id']],
+            'praticien' => ['href' => '/api/praticiens/' . $data['praticienId']],
             'cancel' => ['href' => '/api/rdvs/' . $id, 'method' => 'DELETE']
         ];
 

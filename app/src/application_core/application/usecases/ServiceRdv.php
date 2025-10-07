@@ -36,7 +36,7 @@ final class ServiceRdv implements ServiceRdvInterface
     public function listCreneauxPris(string $praticienId, DateTimeImmutable $debut, DateTimeImmutable $fin): array
     {
         $rdvs = $this->rdvRepository->listForPraticienBetween($praticienId, $debut, $fin);
-        return array_map(static fn($e) => CreneauDTO::fromRdv($e), $rdvs);
+        return array_map(static fn(Rdv $e) => CreneauDTO::fromRdv($e), $rdvs);
     }
 
     public function creerRdv(InputRendezVousDTO $input): string
@@ -56,7 +56,6 @@ final class ServiceRdv implements ServiceRdvInterface
             $input->debut->modify('-1 minute'),
             $fin->modify('+1 minute')
         );
-
         foreach ($existants as $rdvExistant) {
             if ($rdvExistant->getDebut() < $fin && $rdvExistant->getFin() > $input->debut) {
                 throw new SlotConflictException('Slot conflict');

@@ -18,25 +18,11 @@ final class SpecialiteDTO implements JsonSerializable
         return new self($e->getId(), $e->getLibelle(), $e->getDescription());
     }
 
-    public function toArray(): array
+    public function jsonSerialize(): array
     {
         return [
             'libelle' => $this->libelle,
             'description' => $this->description,
         ];
-    }
-
-    public static function listToArray(iterable $entities): array
-    {
-        $out = [];
-        foreach ($entities as $e) {
-            $out[] = self::fromEntity($e)->toArray();
-        }
-        return $out;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
     }
 }

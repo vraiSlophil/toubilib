@@ -17,15 +17,10 @@ final class MoyenPaiementDTO implements JsonSerializable
         return new self($e->getId(), $e->getLibelle());
     }
 
-    public function toArray(): array
+    public function jsonSerialize(): array
     {
         return [
             'libelle' => $this->libelle
         ];
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
     }
 }

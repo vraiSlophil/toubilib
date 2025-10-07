@@ -1,0 +1,15 @@
+meta {
+  name: DELETE /rdvs
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{API_SRC}}/rdvs
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
