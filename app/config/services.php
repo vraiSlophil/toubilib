@@ -39,6 +39,27 @@ return [
         return new PDORdvRepository(
             $c->get('db.rdv'),
         );
-    }
+    },
+
+    // --- Middlewares ---
+
+    AuthnMiddleware::class => function (ContainerInterface $c) {
+        return new AuthnMiddleware(
+            $c->get(AuthnProviderInterface::class)
+        );
+    },
+
+    // AuthzMiddleware nécessite une factory car il a des paramètres variables
+    'AuthzMiddleware.praticien' => function (ContainerInterface $c) {
+        return new AuthzMiddleware([1]); // 1 = role praticien
+    },
+
+    'AuthzMiddleware.patient' => function (ContainerInterface $c) {
+        return new AuthzMiddleware([2]); // 2 = role patient
+    },
+
+    'AuthzMiddleware.all' => function (ContainerInterface $c) {
+        return new AuthzMiddleware([1, 2]); // tous les rôles
+    },
 
 ];

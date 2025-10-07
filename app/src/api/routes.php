@@ -10,6 +10,8 @@ use toubilib\api\actions\GetRootAction;
 use toubilib\api\actions\ListBookedSlotsAction;
 use toubilib\api\actions\ListPraticiensAction;
 use toubilib\api\actions\CancelRdvAction;
+use toubilib\api\middlewares\AuthnMiddleware;
+use toubilib\api\middlewares\AuthzMiddleware;
 use toubilib\api\middlewares\InputRdvHydrationMiddleware;
 
 
@@ -25,7 +27,6 @@ return function (App $app): App {
             });
         });
         $app->group('/rdvs', function (RouteCollectorProxy $app) {
-            $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class);
             $app->get('', function ($request, $response) use ($app) {
                 $q = $request->getQueryParams();
                 // Si un praticien est fourni, déléguer à la méthode existante de /api/praticiens/{id}/rdvs
@@ -41,7 +42,10 @@ return function (App $app): App {
                 return $action($request, $response, []);
             });
             $app->get('/{rdvId}', GetRdvAction::class);
-            $app->delete('/{rdvId}', CancelRdvAction::class); // nouvelle route
+            $app->group('', function (RouteCollectorProxy $app) {
+                $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class)->add('AuthzMiddleware.praticien');
+                $app->delete('/{rdvId}', CancelRdvAction::class)->add('AuthzMiddleware.all');; // nouvelle route
+            })->add(AuthnMiddleware::class);
         });
     });
 
