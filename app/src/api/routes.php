@@ -44,7 +44,7 @@ return function (App $app): App {
             $app->get('/{rdvId}', GetRdvAction::class);
             $app->group('', function (RouteCollectorProxy $app) {
                 $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class)->add('AuthzMiddleware.praticien');
-                $app->delete('/{rdvId}', CancelRdvAction::class)->add('AuthzMiddleware.all');; // nouvelle route
+                $app->delete('/{rdvId}', CancelRdvAction::class)->add('AuthzMiddleware.all'); // nouvelle route
             })->add(AuthnMiddleware::class);
         });
     });

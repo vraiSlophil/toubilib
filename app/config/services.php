@@ -1,5 +1,8 @@
 <?php
 
+use Psr\Container\ContainerInterface;
+use toubilib\api\middlewares\AuthnMiddleware;
+use toubilib\core\application\ports\api\providersInterfaces\AuthProviderInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
@@ -43,9 +46,9 @@ return [
 
     // --- Middlewares ---
 
-    AuthnMiddleware::class => function (ContainerInterface $c) {
+    AuthnMiddleware::class => function ($c) {
         return new AuthnMiddleware(
-            $c->get(AuthnProviderInterface::class)
+            $c->get(AuthProviderInterface::class)
         );
     },
 

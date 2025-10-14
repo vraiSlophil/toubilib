@@ -16,9 +16,8 @@ use toubilib\core\domain\entities\PraticienDetail;
 final class PDOPraticienRepository implements PraticienRepositoryInterface
 {
     public function __construct(
-        private PDO                    $pdo,
-        private MonologLoggerInterface $logger,
-        private PDORdvRepository       $rdvRepository
+        private PDO                       $pdo,
+        private PDORdvRepositoryInterface $rdvRepository
     )
     {
     }

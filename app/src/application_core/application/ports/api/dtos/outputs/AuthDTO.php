@@ -1,14 +1,12 @@
 <?php
 
-namespace toubilib\core\domain\dto;
+namespace toubilib\core\application\ports\api\dtos\outputs;
 
 final class AuthDTO
 {
     public function __construct(
-        public readonly string $userId,
-        public readonly string $email,
-        public readonly int $role,
-        public readonly string $jwt,
-        public readonly ?string $refreshToken = null
+        public ProfileDTO $profile,
+        public string $access_token,
+        public string $refresh_token
     ) {}
 }

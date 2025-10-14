@@ -2,8 +2,11 @@
 
 namespace toubilib\core\application\ports\api\servicesInterfaces;
 
+use toubilib\core\application\ports\api\dtos\inputs\CredentialsDTO;
+use toubilib\core\application\ports\api\dtos\outputs\ProfileDTO;
+
 interface AuthnServiceInterface
 {
-    public function authenticate(string $email, string $password): AuthDTO;
-    public function register(string $email, string $password, int $role): void;
+    public function authenticate(CredentialsDTO $credentials): ProfileDTO;
+    public function register(CredentialsDTO $credentials, int $role): ProfileDTO;
 }

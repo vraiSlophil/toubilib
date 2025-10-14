@@ -1,11 +1,13 @@
 <?php
 
-namespace toubilib\core\domain\dto;
+namespace toubilib\core\application\ports\api\dtos\inputs;
 
-final class CredentialsDTO
-{
-    public function __construct(
-        public readonly string $email,
-        public readonly string $password
-    ) {}
+class CredentialsDTO {
+    public string $email;
+    public string $password;
+
+    public function __construct(string $email, string $password) {
+        $this->email = $email;
+        $this->password = $password;
+    }
 }
