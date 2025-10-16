@@ -1,0 +1,23 @@
+meta {
+  name: /signin
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{API_SRC}}/auth/signin
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "nouveau@patient.fr",
+    "password": "motdepasse123"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

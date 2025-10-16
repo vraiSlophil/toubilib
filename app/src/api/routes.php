@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
+use toubilib\api\actions\auth\SigninAction;
+use toubilib\api\actions\auth\SignupAction;
 use toubilib\api\actions\GetPraticienAction;
 use toubilib\api\actions\GetRdvAction;
 use toubilib\api\actions\CreateRdvAction;
@@ -11,7 +13,6 @@ use toubilib\api\actions\ListBookedSlotsAction;
 use toubilib\api\actions\ListPraticiensAction;
 use toubilib\api\actions\CancelRdvAction;
 use toubilib\api\middlewares\AuthnMiddleware;
-use toubilib\api\middlewares\AuthzMiddleware;
 use toubilib\api\middlewares\InputRdvHydrationMiddleware;
 
 
@@ -19,6 +20,8 @@ return function (App $app): App {
 
     $app->group('/api', function (RouteCollectorProxy $app) {
         $app->get('/', GetRootAction::class);
+        $app->post('/auth/signin', SigninAction::class);
+        $app->post('/auth/signup', SignupAction::class);
         $app->group('/praticiens', function (RouteCollectorProxy $app) {
             $app->get('', ListPraticiensAction::class);
             $app->group('/{praticienId}', function (RouteCollectorProxy $app) {

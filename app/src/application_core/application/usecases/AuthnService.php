@@ -11,7 +11,7 @@ use toubilib\core\domain\entities\User;
 use toubilib\core\domain\exceptions\AuthenticationFailedException;
 use toubilib\core\domain\exceptions\RepositoryEntityNotFoundException;
 
-class AuthnService implements AuthnServiceInterface
+final class AuthnService implements AuthnServiceInterface
 {
 
     public function __construct(

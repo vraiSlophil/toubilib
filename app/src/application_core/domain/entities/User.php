@@ -8,7 +8,7 @@ final class User
         private ?string $id,
         private string $email,
         private string $password,
-        private string $role
+        private int $role
     ) {
 
     }
@@ -33,7 +33,12 @@ final class User
         return $this->password;
     }
 
-    public function getRole(): string
+    public function getHashedPassword(): string
+    {
+        return password_hash($this->password, PASSWORD_ARGON2ID);
+    }
+
+    public function getRole(): int
     {
         return $this->role;
     }

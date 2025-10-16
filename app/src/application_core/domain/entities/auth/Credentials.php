@@ -13,6 +13,5 @@ final class Credentials
     public function getUserId(): string { return $this->userId; }
     public function getEmail(): string { return $this->email; }
     public function getPassword(): string { return $this->password; }
-    public function getHashedPassword(): string { return password_hash($this->password, PASSWORD_ARGON2I); }
 
 }

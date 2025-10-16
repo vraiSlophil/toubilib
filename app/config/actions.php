@@ -5,7 +5,6 @@ use toubilib\api\actions\CancelRdvAction;
 use toubilib\api\actions\CreateRdvAction;
 use toubilib\api\actions\GetPraticienAction;
 use toubilib\api\actions\getRdvAction;
-use toubilib\api\actions\GetRootAction;
 use toubilib\api\actions\ListBookedSlotsAction;
 use toubilib\api\actions\ListPraticiensAction;
 use toubilib\core\application\ports\api\providersInterfaces\AuthProviderInterface;
@@ -56,6 +55,12 @@ return [
         return new SigninAction(
             $c->get(AuthProviderInterface::class)
         );
-    }
+    },
+
+    SignupAction::class => static function ($c) {
+        return new SignupAction(
+            $c->get(AuthProviderInterface::class)
+        );
+    },
 
 ];

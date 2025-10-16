@@ -10,7 +10,7 @@ use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\infra\adapters\MonologLogger;
 
-class ServicePraticien implements ServicePraticienInterface
+final class ServicePraticien implements ServicePraticienInterface
 {
     private PraticienRepositoryInterface $praticienRepository;
     private MonologLoggerInterface $monologLogger;

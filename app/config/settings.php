@@ -6,8 +6,8 @@ use toubilib\infra\adapters\MonologLogger;
 return [
     'settings' => [
         'displayErrorDetails' => true,
-        'logError'            => true,
-        'logErrorDetails'     => true,
+        'logError' => true,
+        'logErrorDetails' => true,
         'logs_dir' => __DIR__ . '/../var/logs',
     ],
 
@@ -16,8 +16,15 @@ return [
         'allowed_methods' => explode(',', $_ENV['CORS_METHODS']),
         'allowed_headers' => explode(',', $_ENV['CORS_HEADERS']),
         'exposed_headers' => explode(',', $_ENV['CORS_EXPOSED_HEADERS']),
-        'allow_credentials' => (bool) $_ENV['CORS_CREDENTIALS'],
-        'max_age' => (int) $_ENV['CORS_MAX_AGE'],
+        'allow_credentials' => (bool)$_ENV['CORS_CREDENTIALS'],
+        'max_age' => (int)$_ENV['CORS_MAX_AGE'],
+    ],
+
+    'jwt' => [
+        'secret' => $_ENV['JWT_SECRET'],
+        'algo' => $_ENV['JWT_ALGORITHM'],
+        'access_expiration' => $_ENV['JWT_ACCESS_EXPIRATION'],
+        'refresh_expiration' => $_ENV['JWT_REFRESH_EXPIRATION'],
     ],
 
     'db.praticien' => static function (): PDO {

@@ -46,7 +46,7 @@ class PDOAuthRepository implements AuthRepositoryInterface
         $stmt = $this->pdo->prepare('INSERT INTO users (email, password, role) VALUES (:email, :password, :role)');
         $stmt->execute([
             'email' => $user->getEmail(),
-            'password' => $user->getPassword(),
+            'password' => $user->getHashedPassword(),
             'role' => $user->getRole()
         ]);
         return (int)$this->pdo->lastInsertId();

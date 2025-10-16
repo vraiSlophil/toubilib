@@ -12,12 +12,14 @@ use toubilib\core\domain\exceptions\JwtManagerInvalidTokenException;
 
 class JwtManager implements JwtManagerInterface {
     private string $secret;
+    private string $algo;
     private int $access_expiration_time;
     private int $refresh_expiration_time;
     private string $issuer;
 
-    public function __construct(string $secret, int $expirationTime, int $refreshExpirationTime) {
+    public function __construct(string $secret, string $algo, int $expirationTime, int $refreshExpirationTime) {
         $this->secret = $secret;
+        $this->algo = $algo;
         $this->access_expiration_time = $expirationTime;
         $this->refresh_expiration_time = $refreshExpirationTime;
     }
@@ -39,7 +41,7 @@ class JwtManager implements JwtManagerInterface {
             'iat' => time(),
             'exp' => $expirationTime,
             'upr' => $payload
-        ], $this->secret, 'HS512');
+        ], $this->secret, $this->algo);
 
         return $token;
     }

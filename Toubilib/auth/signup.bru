@@ -1,0 +1,23 @@
+meta {
+  name: /signup
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{API_SRC}}/auth/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "nouveau@patient.fr",
+    "password": "motdepasse123"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
