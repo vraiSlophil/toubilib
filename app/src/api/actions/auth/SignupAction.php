@@ -2,12 +2,15 @@
 
 namespace toubilib\api\actions\auth;
 
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Exception\HttpBadRequestException;
 use toubilib\core\application\ports\api\dtos\inputs\CredentialsDTO;
 use toubilib\core\application\ports\api\providersInterfaces\AuthProviderInterface;
 use toubilib\core\domain\exceptions\AuthenticationFailedException;
+use toubilib\core\domain\exceptions\DuplicateEmailException;
+use toubilib\core\domain\exceptions\InvalidPasswordException;
 use toubilib\infra\adapters\ApiResponseBuilder;
 
 class SignupAction
@@ -24,7 +27,7 @@ class SignupAction
         $data = $request->getParsedBody();
 
         if (empty($data['email']) || empty($data['password'])) {
-            throw new HttpBadRequestException($request, 'Email and password are required');
+            return ApiResponseBuilder::create()->status(400)->error('Missing email or password', (throw new HttpBadRequestException($request, 'Missing email or password')))->build($response);
         }
 
         // Par défaut, les nouveaux comptes sont des patients (rôle 1)
@@ -32,14 +35,18 @@ class SignupAction
 
         // Optionnel : restreindre la création de praticiens
         if ($role === 10) {
-            throw new HttpBadRequestException($request, 'Cannot register as practitioner');
+            return ApiResponseBuilder::create()->status(400)->error('Invalid role', (throw new HttpBadRequestException($request, 'Cannot register as practitioner')))->build($response);
         }
 
         $credentials = new CredentialsDTO($data['email'], $data['password']);
 
         try {
             $profile = $this->authProvider->register($credentials, $role);
-        } catch (AuthenticationFailedException $e) {
+        } catch (InvalidPasswordException $e) {
+            return ApiResponseBuilder::create()->status(400)->error('Invalid password', $e)->build($response);
+        } catch (DuplicateEmailException $e) {
+            return ApiResponseBuilder::create()->status(400)->error('Email already exists', $e)->build($response);
+        } catch (Exception $e) {
             throw new HttpBadRequestException($request, $e->getMessage());
         }
 

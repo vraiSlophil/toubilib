@@ -7,6 +7,7 @@ use PDO;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
 use toubilib\core\domain\entities\User;
+use toubilib\core\domain\exceptions\DuplicateEmailException;
 
 class PDOAuthRepository implements AuthRepositoryInterface
 {
@@ -41,16 +42,15 @@ class PDOAuthRepository implements AuthRepositoryInterface
 
     }
 
-    public function save(User $user): int
+    public function save(User $user): void
     {
-        $stmt = $this->pdo->prepare('INSERT INTO users (email, password, role) VALUES (:email, :password, :role)');
+        $stmt = $this->pdo->prepare('INSERT INTO users (id, email, password, role) VALUES (:id, :email, :password, :role)');
         $stmt->execute([
+            'id' => $user->getId(),
             'email' => $user->getEmail(),
             'password' => $user->getHashedPassword(),
             'role' => $user->getRole()
         ]);
-        return (int)$this->pdo->lastInsertId();
-
     }
 
     public function delete(string $id): void
