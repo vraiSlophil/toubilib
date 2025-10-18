@@ -5,17 +5,26 @@ meta {
 }
 
 get {
-  url: {{API_SRC}}/rdvs?debut=2025-12-01&fin=2025-12-30
+  url: {{API_SRC}}/rdvs?debut=2025-12-01&fin=2025-12-30&praticienId={{praticienId}}
   body: none
-  auth: inherit
+  auth: bearer
 }
 
 params:query {
   debut: 2025-12-01
   fin: 2025-12-30
-  ~praticienId: {{praticienId}}
+  praticienId: {{praticienId}}
+}
+
+headers {
+  ~Authorization: Bearer {{accessToken}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

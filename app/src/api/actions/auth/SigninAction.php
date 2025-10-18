@@ -30,6 +30,14 @@ class SigninAction
             throw new HttpUnauthorizedException($request, $e->getMessage());
         }
 
-        return ApiResponseBuilder::create()->status(200)->data($auth_dto)->build($response);
+        return ApiResponseBuilder::create()->status(200)->data([
+            'profile' => [
+                'id' => $auth_dto->profile->ID,
+                'email' => $auth_dto->profile->email,
+                'role' => $auth_dto->profile->role
+            ],
+            'accessToken' => $auth_dto->access_token,
+            'refreshToken' => $auth_dto->refresh_token
+        ])->build($response);
     }
 }

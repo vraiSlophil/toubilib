@@ -25,7 +25,10 @@ class PDOAuthRepository implements AuthRepositoryInterface
         $stmt->execute(['email' => $email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new User($row['id'], $row['email'], $row['password'], (int)$row['role']);
+            $user = new User($row['email'], $row['password'], (int)$row['role']);
+            $user->setId($row['id']);
+            return $user;
+
         }
         throw new Exception('User not found');
     }
@@ -36,7 +39,9 @@ class PDOAuthRepository implements AuthRepositoryInterface
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            return new User($row['id'], $row['email'], $row['password'], (int)$row['role']);
+            $user = new User($row['email'], $row['password'], (int)$row['role']);
+            $user->setId($row['id']);
+            return $user;
         }
         throw new Exception('User not found');
 

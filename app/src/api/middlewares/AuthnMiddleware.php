@@ -6,9 +6,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpUnauthorizedException;
+use Slim\Psr7\Response;
 use toubilib\core\application\ports\api\providersInterfaces\AuthProviderInterface;
 use toubilib\core\domain\exceptions\AuthProviderExpiredAccessToken;
 use toubilib\core\domain\exceptions\AuthProviderInvalidAccessToken;
+use toubilib\infra\adapters\ApiResponseBuilder;
 
 class AuthnMiddleware
 {
@@ -23,7 +25,7 @@ class AuthnMiddleware
     {
         $token_line = $request->hasHeader('Authorization')
             ? $request->getHeaderLine('Authorization')
-            : throw new HttpUnauthorizedException($request, "missing authorization header");
+            : ApiResponseBuilder::create()->error('missing authorization header', throw new HttpUnauthorizedException($request, "missing authorization header"))->status(400)->build(new Response());
 
         $token = sscanf($token_line, "Bearer %s")[0];
 

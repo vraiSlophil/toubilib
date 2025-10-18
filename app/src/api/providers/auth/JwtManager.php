@@ -15,13 +15,14 @@ class JwtManager implements JwtManagerInterface {
     private string $algo;
     private int $access_expiration_time;
     private int $refresh_expiration_time;
-    private string $issuer;
+    private ?string $issuer;
 
     public function __construct(string $secret, string $algo, int $expirationTime, int $refreshExpirationTime) {
         $this->secret = $secret;
         $this->algo = $algo;
         $this->access_expiration_time = $expirationTime;
         $this->refresh_expiration_time = $refreshExpirationTime;
+        $this->issuer = "toubilib_api";
     }
 
     public function setIssuer(string $issuer): void {
@@ -48,7 +49,7 @@ class JwtManager implements JwtManagerInterface {
 
     public function validate(string $jwtToken): array {
         try {
-            $jwtToken = JWT::decode($jwtToken, new Key($this->secret, 'HS512'));
+            $jwtToken = JWT::decode($jwtToken, new Key($this->secret, $this->algo));
         } catch (ExpiredException $e) {
             throw new JwtManagerExpiredTokenException("expired jwt token");
         } catch (SignatureInvalidException | \UnexpectedValueException | \DomainException $e) {

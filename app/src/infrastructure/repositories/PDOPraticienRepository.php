@@ -17,7 +17,7 @@ final class PDOPraticienRepository implements PraticienRepositoryInterface
 {
     public function __construct(
         private PDO                       $pdo,
-        private PDORdvRepositoryInterface $rdvRepository
+        private PDORdvRepository $rdvRepository
     )
     {
     }
@@ -34,8 +34,6 @@ final class PDOPraticienRepository implements PraticienRepositoryInterface
 
         $statement->execute();
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        $this->logger->debug(print_r($results, true));
 
         $praticiens = [];
         foreach ($results as $row) {

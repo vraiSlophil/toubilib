@@ -1,6 +1,7 @@
 <?php
 
 use toubilib\api\middlewares\AuthnMiddleware;
+use toubilib\api\middlewares\AuthzMiddleware;
 use toubilib\api\providers\auth\JwtAuthProvider;
 use toubilib\api\providers\auth\JwtManager;
 use toubilib\core\application\ports\api\providersInterfaces\AuthProviderInterface;
@@ -66,7 +67,7 @@ return [
     PraticienRepositoryInterface::class => static function ($c) {
         return new PDOPraticienRepository(
             $c->get('db.praticien'),
-            $c->get(RdvRepositoryInterface::class)
+            $c->get(RdvRepositoryInterface::class),
         );
     },
 
@@ -89,5 +90,4 @@ return [
             $c->get(AuthProviderInterface::class)
         );
     },
-
 ];

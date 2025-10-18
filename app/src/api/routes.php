@@ -13,10 +13,14 @@ use toubilib\api\actions\ListBookedSlotsAction;
 use toubilib\api\actions\ListPraticiensAction;
 use toubilib\api\actions\CancelRdvAction;
 use toubilib\api\middlewares\AuthnMiddleware;
+use toubilib\api\middlewares\AuthzMiddleware;
 use toubilib\api\middlewares\InputRdvHydrationMiddleware;
+use toubilib\core\application\usecases\AuthzService;
 
 
 return function (App $app): App {
+
+
 
     $app->group('/api', function (RouteCollectorProxy $app) {
         $app->get('/', GetRootAction::class);
@@ -46,10 +50,12 @@ return function (App $app): App {
             });
             $app->get('/{rdvId}', GetRdvAction::class);
             $app->group('', function (RouteCollectorProxy $app) {
-                $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class)->add('AuthzMiddleware.praticien');
-                $app->delete('/{rdvId}', CancelRdvAction::class)->add('AuthzMiddleware.all'); // nouvelle route
+                $c = $app->getContainer();
+                $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class)->add(new AuthzMiddleware($c->get(AuthzService::class), 'createRdv'));
+                $app->delete('/{rdvId}', CancelRdvAction::class)->add(new AuthzMiddleware($c->get(AuthzService::class), 'cancelRdv'));
             })->add(AuthnMiddleware::class);
         });
+//        })->add(AuthnMiddleware::class);
     });
 
     return $app;

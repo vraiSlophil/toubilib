@@ -7,7 +7,11 @@ meta {
 post {
   url: {{API_SRC}}/auth/signin
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 body:json {
@@ -15,6 +19,12 @@ body:json {
     "email": "nouveau2@patient.fr",
     "password": "P@ssw0rd"
   }
+}
+
+script:post-response {
+  let body = res.getBody();
+  bru.setEnvVar("accessToken",body.data.accessToken);
+  bru.setEnvVar("refreshToken",body.data.refreshToken);
 }
 
 settings {
