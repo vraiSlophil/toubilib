@@ -1,0 +1,25 @@
+meta {
+  name: Patch /rdv/{id}
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{API_SRC}}/rdvs/{{rdvId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": true
+  }
+}
+
+settings {
+  encodeUrl: true
+}

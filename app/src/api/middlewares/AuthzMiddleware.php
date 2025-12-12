@@ -39,10 +39,12 @@ final class AuthzMiddleware
             'viewAgenda' => $this->authzService->canAccessPraticienAgenda($auth, $praticienId),
             'viewRdv' => $this->authzService->canAccessRdvDetails($auth, $rdvId),
             'cancelRdv' => $this->authzService->canCancelRdv($auth, $rdvId),
+            'editRdv' => $this->authzService->canEditRdv($auth, $rdvId),
             'createRdv' => $this->authzService->canCreateRdv($auth),
             'listRdvs' => $this->authzService->canListUserRdvs($auth),
             default => false
         };
+
 
         if (!$authorized) {
             return ApiResponseBuilder::create()

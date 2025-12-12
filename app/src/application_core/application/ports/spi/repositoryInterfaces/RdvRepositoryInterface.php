@@ -17,5 +17,7 @@ interface RdvRepositoryInterface
 
     public function create(Rdv $rdv): void;
 
-    public function delete(string $rdvId): void; // suppression physique pour annulation
+    public function delete(string $rdvId): void;
+
+    public function update(Rdv $rdv);
 }

@@ -5,6 +5,7 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use toubilib\api\actions\auth\SigninAction;
 use toubilib\api\actions\auth\SignupAction;
+use toubilib\api\actions\EditRdvAction;
 use toubilib\api\actions\GetPraticienAction;
 use toubilib\api\actions\GetRdvAction;
 use toubilib\api\actions\CreateRdvAction;
@@ -16,7 +17,6 @@ use toubilib\api\actions\AgendaPraticienAction;
 use toubilib\api\actions\ListRdvsAction;
 use toubilib\api\middlewares\AuthnMiddleware;
 use toubilib\api\middlewares\AuthzMiddleware;
-use toubilib\api\middlewares\InputRdvHydrationMiddleware;
 use toubilib\core\application\usecases\AuthzService;
 
 
@@ -47,14 +47,13 @@ return function (App $app): App {
                 ->add(AuthnMiddleware::class);
             $app->get('/{rdvId}', GetRdvAction::class)
                 ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'viewRdv'))
-                ->add(function ($request, $handler) {
-                    $args = $request->getAttribute('route')->getArguments();
-                    return $handler->handle($request->withAttribute('rdvId', $args['rdvId'] ?? null));
-                })
+                ->add(AuthnMiddleware::class);
+            $app->patch('/{rdvId}', EditRdvAction::class)
+                ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'editRdv'))
                 ->add(AuthnMiddleware::class);
             $app->group('', function (RouteCollectorProxy $app) {
                 $c = $app->getContainer();
-                $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class)->add(new AuthzMiddleware($c->get(AuthzService::class), 'createRdv'));
+                $app->post('', CreateRdvAction::class)->add(new AuthzMiddleware($c->get(AuthzService::class), 'createRdv'));
                 $app->delete('/{rdvId}', CancelRdvAction::class)->add(new AuthzMiddleware($c->get(AuthzService::class), 'cancelRdv'));
             })->add(AuthnMiddleware::class);
         });

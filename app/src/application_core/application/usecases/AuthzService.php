@@ -59,4 +59,19 @@ final class AuthzService implements AuthzServiceInterface
 
         return in_array($user->role, [Roles::PATIENT, Roles::PRATICIEN], true);
     }
+
+    public function canEditRdv(ProfileDTO $user, string $rdvId): bool
+    {
+        if ($rdvId === '' || $user->role !== Roles::PRATICIEN) {
+            return false;
+        }
+
+        $rdv = $this->rdvRepository->getById($rdvId);
+        if ($rdv === null) {
+            return false;
+        }
+
+        return $rdv->getPraticienId() === $user->ID;
+    }
+
 }

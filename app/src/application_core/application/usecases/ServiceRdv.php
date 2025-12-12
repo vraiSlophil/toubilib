@@ -54,9 +54,9 @@ final class ServiceRdv implements ServiceRdvInterface
         if ($praticien === null) {
             throw new PraticienNotFoundException('Praticien not found');
         }
-        if (!$praticien->isValidMotifVisite($input->motifVisite)) {
-            throw new InvalidMotifException('Motif invalid for this praticien');
-        }
+//        if (!$praticien->isValidMotifVisite($input->motifVisite)) {
+//            throw new InvalidMotifException('Motif invalid for this praticien');
+//        }
 
         $fin = $input->debut->modify('+' . $input->dureeMinutes . ' minutes');
 
@@ -104,5 +104,16 @@ final class ServiceRdv implements ServiceRdvInterface
             ),
             default => [],
         };
+    }
+
+    public function updateRdvStatus(string $rdvId, bool $status): void
+    {
+        $rdv = $this->rdvRepository->getById($rdvId);
+        if ($rdv === null) {
+            throw new RdvNotFoundException('Rdv not found');
+        }
+
+        $rdv->setStatus($status);
+        $this->rdvRepository->update($rdv);
     }
 }

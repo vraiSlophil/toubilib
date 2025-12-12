@@ -18,7 +18,7 @@ final class ListBookedSlotsAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $praticienId = $args['praticienId'] ?? ($request->getAttribute('praticienId') ?? '');
+        $praticienId = $args['praticienId'] ?? '';
         $q = $request->getQueryParams();
 
         if (empty($q['debut']) || empty($q['fin'])) {

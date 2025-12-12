@@ -9,8 +9,8 @@ use toubilib\core\domain\exceptions\RdvPastCannotBeCancelledException;
 
 final class Rdv
 {
-    public const STATUS_SCHEDULED = 0; // conservé mais non utilisé pour annulation
-    public const STATUS_CANCELLED = 1; // conservé pour compat éventuelle
+    public const STATUS_NOT_OK = 0;
+    public const STATUS_OK = 1;
 
     public function __construct(
         private string             $id,
@@ -36,7 +36,7 @@ final class Rdv
             $inputRendezVousDTO->dureeMinutes,
             $inputRendezVousDTO->debut->modify('+' . $inputRendezVousDTO->dureeMinutes . ' minutes'),
             new DateTimeImmutable(),
-            self::STATUS_SCHEDULED,
+            self::STATUS_NOT_OK,
             $inputRendezVousDTO->motifVisite
         );
     }
@@ -62,5 +62,10 @@ final class Rdv
             throw new RdvPastCannotBeCancelledException("Impossible d'annuler un rendez-vous passé ou en cours.");
         }
         // Pas de changement de statut : la suppression sera faite au niveau repository
+    }
+
+    public function setStatus(bool $status): void
+    {
+        $this->status = $status ? self::STATUS_NOT_OK : self::STATUS_OK;
     }
 }

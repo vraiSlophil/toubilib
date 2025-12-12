@@ -2,10 +2,13 @@
 
 namespace toubilib\api\actions;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use toubilib\core\application\ports\api\dtos\inputs\InputRendezVousDTO;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
+use toubilib\core\domain\entities\Roles;
 use toubilib\core\domain\exceptions\PraticienNotFoundException;
 use toubilib\core\domain\exceptions\InvalidMotifException;
 use toubilib\core\domain\exceptions\SlotConflictException;
@@ -20,11 +23,42 @@ final class CreateRdvAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $input = $request->getAttribute('input_rdv');
-        if ($input === null) {
+        $parsed = $request->getParsedBody();
+
+        if (!is_array($parsed)) {
             return ApiResponseBuilder::create()
                 ->status(400)
-                ->error('Missing rdv data.')
+                ->error('Invalid request body: expected JSON object.')
+                ->build($response);
+        }
+
+        $user = $request->getAttribute('authenticated_user');
+        if ($user === null || $user->role !== Roles::PATIENT) {
+            return ApiResponseBuilder::create()
+                ->status(403)
+                ->error('Only patients can create appointments.')
+                ->build($response);
+        }
+
+        $payload = array_merge($parsed, [
+            'patientId' => $user->ID,
+            'patientEmail' => $user->email,
+        ]);
+
+        try {
+            $input = InputRendezVousDTO::fromArray($payload);
+        } catch (InvalidArgumentException $e) {
+            return ApiResponseBuilder::create()
+                ->status(422)
+                ->error('Invalid request body', $e)
+                ->build($response);
+        }
+
+        $errors = $input->validate();
+        if (!empty($errors)) {
+            return ApiResponseBuilder::create()
+                ->status(422)
+                ->error('Validation errors: ' . json_encode($errors))
                 ->build($response);
         }
 

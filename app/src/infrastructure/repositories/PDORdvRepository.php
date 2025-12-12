@@ -116,4 +116,30 @@ final class PDORdvRepository implements RdvRepositoryInterface
         $stmt = $this->pdo->prepare('DELETE FROM rdv WHERE id = :id');
         $stmt->execute([':id' => $rdvId]);
     }
+
+    public function update(Rdv $rdv)
+    {
+        $sql = 'UPDATE rdv SET
+                    praticien_id = :praticien_id,
+                    patient_id = :patient_id,
+                    patient_email = :patient_email,
+                    date_heure_debut = :date_heure_debut,
+                    duree = :duree,
+                    date_heure_fin = :date_heure_fin,
+                    status = :status,
+                    motif_visite = :motif_visite
+                WHERE id = :id';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':id'               => $rdv->getId(),
+            ':praticien_id'     => $rdv->getPraticienId(),
+            ':patient_id'       => $rdv->getPatientId(),
+            ':patient_email'    => $rdv->getPatientEmail(),
+            ':date_heure_debut' => $rdv->getDebut()->format('Y-m-d H:i:sP'),
+            ':duree'            => $rdv->getDureeMinutes(),
+            ':date_heure_fin'   => $rdv->getFin()?->format('Y-m-d H:i:sP'),
+            ':status'           => $rdv->getStatus(),
+            ':motif_visite'     => $rdv->getMotifVisite(),
+        ]);
+    }
 }
