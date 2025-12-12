@@ -15,6 +15,9 @@ use toubilib\api\actions\ListPraticiensAction;
 use toubilib\api\actions\CancelRdvAction;
 use toubilib\api\actions\AgendaPraticienAction;
 use toubilib\api\actions\ListRdvsAction;
+use toubilib\api\actions\CreateIndisponibiliteAction;
+use toubilib\api\actions\ListIndisponibilitesAction;
+use toubilib\api\actions\DeleteIndisponibiliteAction;
 use toubilib\api\middlewares\AuthnMiddleware;
 use toubilib\api\middlewares\AuthzMiddleware;
 use toubilib\core\application\usecases\AuthzService;
@@ -36,6 +39,17 @@ return function (App $app): App {
                 $app->get('', GetPraticienAction::class);
                 $app->get('/rdvs', ListBookedSlotsAction::class)
                     ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'viewAgenda'))
+                    ->add(AuthnMiddleware::class);
+
+                // Routes for indisponibilites
+                $app->get('/indisponibilites', ListIndisponibilitesAction::class)
+                    ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'manageIndisponibilites'))
+                    ->add(AuthnMiddleware::class);
+                $app->post('/indisponibilites', CreateIndisponibiliteAction::class)
+                    ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'manageIndisponibilites'))
+                    ->add(AuthnMiddleware::class);
+                $app->delete('/indisponibilites/{indispo_id}', DeleteIndisponibiliteAction::class)
+                    ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'manageIndisponibilites'))
                     ->add(AuthnMiddleware::class);
             });
         });

@@ -60,6 +60,16 @@ final class ServiceRdv implements ServiceRdvInterface
 
         $fin = $input->debut->modify('+' . $input->dureeMinutes . ' minutes');
 
+        // Check for indisponibilites
+        $indisponibilites = $this->indisponibiliteRepository->listForPraticienBetween(
+            $input->praticienId,
+            $input->debut,
+            $fin
+        );
+        if (count($indisponibilites) > 0) {
+            throw new PraticienUnavailableException('Praticien unavailable during this period');
+        }
+
         $existants = $this->rdvRepository->listForPraticienBetween(
             $input->praticienId,
             $input->debut->modify('-1 minute'),

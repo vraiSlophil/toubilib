@@ -5,15 +5,16 @@ meta {
 }
 
 get {
-  url: {{API_SRC}}/rdvs?debut={{agendaStart}}&fin={{agendaEnd}}&praticienId={{praticienId}}
+  url: {{API_SRC}}/rdvs
   body: none
   auth: inherit
 }
 
 params:query {
-  debut: {{agendaStart}}
-  fin: {{agendaEnd}}
-  praticienId: {{praticienId}}
+  ~debut: {{agendaStart}}
+  ~fin: {{agendaEnd}}
+  ~praticienId: {{praticienId}}
+  ~history: false
 }
 
 headers {

@@ -83,5 +83,27 @@ CREATE TABLE "public"."structure"
     "telephone"   character varying(24)
 ) WITH (oids = false);
 
+DROP TABLE IF EXISTS "indisponibilite";
+
+CREATE TABLE "public"."indisponibilite"
+(
+    "id"            uuid                  DEFAULT gen_random_uuid() NOT NULL,
+    "praticien_id"  uuid                                            NOT NULL,
+    "debut"         timestamp with time zone                        NOT NULL,
+    "fin"           timestamp with time zone                        NOT NULL,
+    "motif"         character varying(255),
+    "created_at"    timestamp with time zone DEFAULT NOW()          NOT NULL,
+    CONSTRAINT "indisponibilite_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "indisponibilite_dates_check" CHECK ("fin" > "debut")
+) WITH (oids = false);
+
+CREATE INDEX "indisponibilite_praticien_idx" ON "public"."indisponibilite" ("praticien_id");
+CREATE INDEX "indisponibilite_dates_idx" ON "public"."indisponibilite" ("debut", "fin");
+
+COMMENT ON TABLE "public"."indisponibilite" IS 'Périodes d''indisponibilité temporaires des praticiens';
+COMMENT ON COLUMN "public"."indisponibilite"."motif" IS 'Raison de l''indisponibilité (congés, formation, etc.)';
+
+
+
 
 -- 2025-06-30 12:31:32.033009+00

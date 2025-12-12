@@ -30,7 +30,16 @@ final class ApiResponseBuilder implements ApiResponseBuilderInterface
 
     public function data(mixed $data): self
     {
-        $this->data = $data;
+        if (is_array($data)) {
+            $this->data = array_map(
+                fn($item) => $item instanceof \JsonSerializable ? $item->jsonSerialize() : $item,
+                $data
+            );
+        } elseif ($data instanceof \JsonSerializable) {
+            $this->data = $data->jsonSerialize();
+        } else {
+            $this->data = $data;
+        }
         return $this;
     }
 

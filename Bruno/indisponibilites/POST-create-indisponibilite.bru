@@ -1,0 +1,30 @@
+meta {
+  name: POST - Create Indisponibilite
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{API_SRC}}/praticiens/{{praticienId}}/indisponibilites
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "debut": "2025-12-20T09:00:00Z",
+    "fin": "2025-12-27T18:00:00Z",
+    "motif": "Congés de Noël"
+  }
+}
+
+script:post-response {
+  let body = res.getBody();
+  if (body.data && body.data.id) {
+    bru.setEnvVar("indispoId",body.data.id);
+  }
+}

@@ -1,0 +1,19 @@
+meta {
+  name: DELETE - Delete Indisponibilite
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{API_SRC}}/praticiens/{{praticienId}}/indisponibilites/{{indispoId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+vars:pre-request {
+  indispoId: 019b13d7-052b-716f-ae9f-5417260ebab0
+}

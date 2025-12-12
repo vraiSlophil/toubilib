@@ -1,0 +1,15 @@
+meta {
+  name: GET - List Indisponibilites
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{API_SRC}}/praticiens/{{praticienId}}/indisponibilites
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}

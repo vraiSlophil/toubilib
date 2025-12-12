@@ -74,4 +74,13 @@ final class AuthzService implements AuthzServiceInterface
         return $rdv->getPraticienId() === $user->ID;
     }
 
+    public function canManageIndisponibilites(ProfileDTO $user, string $praticienId): bool
+    {
+        if ($praticienId === '') {
+            return false;
+        }
+
+        return $user->role === Roles::PRATICIEN && $user->ID === $praticienId;
+    }
+
 }
