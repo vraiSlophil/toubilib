@@ -7,24 +7,24 @@ meta {
 post {
   url: {{API_SRC}}/auth/signin
   body: json
-  auth: bearer
-}
-
-auth:bearer {
-  token: {{accessToken}}
+  auth: inherit
 }
 
 body:json {
   {
-    "email": "nouveau2@patient.fr",
+    "email": "{{patientEmail}}",
     "password": "P@ssw0rd"
   }
 }
 
 script:post-response {
+  // persist access/refresh tokens for subsequent folders
   let body = res.getBody();
   bru.setEnvVar("accessToken",body.data.accessToken);
   bru.setEnvVar("refreshToken",body.data.refreshToken);
+  if (body.data.profile?.id) {
+    bru.setEnvVar("profileId", body.data.profile.id);
+  }
 }
 
 settings {

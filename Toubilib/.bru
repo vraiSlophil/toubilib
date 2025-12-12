@@ -4,11 +4,14 @@ meta {
   seq: 3
 }
 
+// simple health/root check
 get {
   url: {{API_SRC}}/
   body: none
   auth: inherit
 }
+
+// hits Slim /api root
 
 settings {
   encodeUrl: true

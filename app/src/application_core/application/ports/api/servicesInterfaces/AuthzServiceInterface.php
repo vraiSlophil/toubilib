@@ -10,4 +10,5 @@ interface AuthzServiceInterface
     public function canAccessRdvDetails(ProfileDTO $user, string $rdvId): bool;
     public function canCancelRdv(ProfileDTO $user, string $rdvId): bool;
     public function canCreateRdv(ProfileDTO $user): bool;
+    public function canListUserRdvs(ProfileDTO $user): bool;
 }

@@ -58,6 +58,20 @@ final class PDORdvRepository implements RdvRepositoryInterface
         return $this->listForPraticienBetween($praticienId, $debut, $fin);
     }
 
+    public function listForPatient(string $patientId): array
+    {
+        $sql = 'SELECT id, praticien_id, patient_id, patient_email, date_heure_debut, duree, date_heure_fin, date_creation, status, motif_visite
+                FROM rdv WHERE patient_id = :pid ORDER BY date_heure_debut DESC';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':pid' => $patientId]);
+
+        $out = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $out[] = $this->map($row);
+        }
+
+        return $out;
+    }
 
     private function map(array $r): Rdv
     {

@@ -4,39 +4,42 @@ namespace toubilib\core\application\usecases;
 
 use toubilib\core\application\ports\api\dtos\outputs\ProfileDTO;
 use toubilib\core\application\ports\api\servicesInterfaces\AuthzServiceInterface;
+use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use toubilib\core\domain\entities\Roles;
 
 final class AuthzService implements AuthzServiceInterface
 {
     public function __construct(
-        private RdvRepositoryInterface $rdvRepository
+        private RdvRepositoryInterface $rdvRepository,
+        private MonologLoggerInterface $monologLogger
     ) {}
 
     public function canAccessPraticienAgenda(ProfileDTO $user, string $praticienId): bool
     {
-        // Praticien peut voir son propre agenda
-        if ($user->role === 10 && $user->ID === $praticienId) {
-            return true;
+        if ($praticienId === '') {
+            return false;
         }
-        // Les patients peuvent voir l'agenda (créneaux disponibles)
-        return true;
+
+        return $user->role === Roles::PRATICIEN && $user->ID === $praticienId;
     }
 
     public function canAccessRdvDetails(ProfileDTO $user, string $rdvId): bool
     {
+        if ($rdvId === '') {
+            return false;
+        }
+
         $rdv = $this->rdvRepository->getById($rdvId);
-
-        // Praticien propriétaire du RDV
-        if ($user->role === 10 && $rdv->getPraticienId() === $user->ID) {
-            return true;
+        if ($rdv === null) {
+            return false;
         }
 
-        // Patient propriétaire du RDV
-        if ($user->role === 1 && $rdv->getPatientId() === $user->ID) {
-            return true;
-        }
-
-        return false;
+        return match ($user->role) {
+            Roles::PRATICIEN => $rdv->getPraticienId() === $user->ID,
+            Roles::PATIENT => $rdv->getPatientId() === $user->ID,
+            default => false,
+        };
     }
 
     public function canCancelRdv(ProfileDTO $user, string $rdvId): bool
@@ -46,7 +49,14 @@ final class AuthzService implements AuthzServiceInterface
 
     public function canCreateRdv(ProfileDTO $user): bool
     {
-        // Seuls les praticiens peuvent créer des RDV
-        return $user->role === 10;
+        return $user->role === Roles::PATIENT;
+    }
+
+    public function canListUserRdvs(ProfileDTO $user): bool
+    {
+
+        $this->monologLogger->log('info', $user->role);
+
+        return in_array($user->role, [Roles::PATIENT, Roles::PRATICIEN], true);
     }
 }

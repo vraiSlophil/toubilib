@@ -43,7 +43,7 @@ return [
     },
 
     AuthzService::class => static function ($c) {
-        return new AuthzService($c->get(RdvRepositoryInterface::class));
+        return new AuthzService($c->get(RdvRepositoryInterface::class), $c->get(MonologLoggerInterface::class));
     },
 
     JwtManagerInterface::class => static function ($c) {

@@ -1,19 +1,20 @@
 <?php
 
 use toubilib\api\actions\auth\SigninAction;
+use toubilib\api\actions\auth\SignupAction;
+use toubilib\api\actions\AgendaPraticienAction;
 use toubilib\api\actions\CancelRdvAction;
 use toubilib\api\actions\CreateRdvAction;
 use toubilib\api\actions\GetPraticienAction;
-use toubilib\api\actions\getRdvAction;
-use toubilib\api\actions\ListBookedSlotsAction;
+use toubilib\api\actions\GetRdvAction;
 use toubilib\api\actions\ListPraticiensAction;
+use toubilib\api\actions\ListRdvsAction;
 use toubilib\core\application\ports\api\providersInterfaces\AuthProviderInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServicePraticienInterface;
 use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 
 return [
-
     ListPraticiensAction::class => static function ($c) {
         return new ListPraticiensAction(
             $c->get(ServicePraticienInterface::class)
@@ -23,6 +24,18 @@ return [
     GetPraticienAction::class => static function ($c) {
         return new GetPraticienAction(
             $c->get(ServicePraticienInterface::class)
+        );
+    },
+
+    AgendaPraticienAction::class => static function ($c) {
+        return new AgendaPraticienAction(
+            $c->get(ServiceRdvInterface::class)
+        );
+    },
+
+    ListRdvsAction::class => static function ($c) {
+        return new ListRdvsAction(
+            $c->get(ServiceRdvInterface::class)
         );
     },
 
@@ -42,12 +55,6 @@ return [
         return new CancelRdvAction(
             $c->get(ServiceRdvInterface::class),
             $c->get(MonologLoggerInterface::class)
-        );
-    },
-
-    ListBookedSlotsAction::class => static function ($c) {
-        return new ListBookedSlotsAction(
-            $c->get(ServiceRdvInterface::class),
         );
     },
 

@@ -5,6 +5,7 @@ namespace toubilib\api\middlewares;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response;
+use Slim\Routing\RouteContext;
 use toubilib\core\application\usecases\AuthzService;
 use toubilib\infra\adapters\ApiResponseBuilder;
 
@@ -28,20 +29,18 @@ final class AuthzMiddleware
                 ->build(new Response());
         }
 
+        $route = RouteContext::fromRequest($request)->getRoute();
+        $routeArgs = $route ? $route->getArguments() : [];
+        $praticienId = $request->getAttribute('praticienId') ?? ($routeArgs['praticienId'] ?? '');
+        $rdvId = $request->getAttribute('rdvId') ?? ($routeArgs['rdvId'] ?? '');
+
+
         $authorized = match ($this->operation) {
-            'viewAgenda' => $this->authzService->canAccessPraticienAgenda(
-                $auth,
-                $request->getAttribute('praticienId')
-            ),
-            'viewRdv' => $this->authzService->canAccessRdvDetails(
-                $auth,
-                $request->getAttribute('rdvId')
-            ),
-            'cancelRdv' => $this->authzService->canCancelRdv(
-                $auth,
-                $request->getAttribute('rdvId')
-            ),
+            'viewAgenda' => $this->authzService->canAccessPraticienAgenda($auth, $praticienId),
+            'viewRdv' => $this->authzService->canAccessRdvDetails($auth, $rdvId),
+            'cancelRdv' => $this->authzService->canCancelRdv($auth, $rdvId),
             'createRdv' => $this->authzService->canCreateRdv($auth),
+            'listRdvs' => $this->authzService->canListUserRdvs($auth),
             default => false
         };
 

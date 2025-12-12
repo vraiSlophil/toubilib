@@ -12,6 +12,8 @@ use toubilib\api\actions\GetRootAction;
 use toubilib\api\actions\ListBookedSlotsAction;
 use toubilib\api\actions\ListPraticiensAction;
 use toubilib\api\actions\CancelRdvAction;
+use toubilib\api\actions\AgendaPraticienAction;
+use toubilib\api\actions\ListRdvsAction;
 use toubilib\api\middlewares\AuthnMiddleware;
 use toubilib\api\middlewares\AuthzMiddleware;
 use toubilib\api\middlewares\InputRdvHydrationMiddleware;
@@ -30,25 +32,22 @@ return function (App $app): App {
             $app->get('', ListPraticiensAction::class);
             $app->group('/{praticienId}', function (RouteCollectorProxy $app) {
                 $app->get('', GetPraticienAction::class);
-                $app->get('/rdvs', ListBookedSlotsAction::class);
+                $app->get('/rdvs', ListBookedSlotsAction::class)
+                    ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'viewAgenda'))
+                    ->add(AuthnMiddleware::class);
             });
         });
         $app->group('/rdvs', function (RouteCollectorProxy $app) {
-            $app->get('', function ($request, $response) use ($app) {
-                $q = $request->getQueryParams();
-                // Si un praticien est fourni, déléguer à la méthode existante de /api/praticiens/{id}/rdvs
-                $action = $app->getContainer()->get(ListBookedSlotsAction::class);
-                if (!empty($q['praticienId'])) {
-                    return $action(
-                        $request->withAttribute('praticienId', $q['praticienId']),
-                        $response,
-                        ['praticienId' => $q['praticienId']]
-                    );
-                }
-                // Sinon, retourner la liste de tous les rendez-vous disponibles pour la plage donnée
-                return $action($request, $response, []);
-            });
-            $app->get('/{rdvId}', GetRdvAction::class);
+            $app->get('', ListRdvsAction::class)
+                ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'listRdvs'))
+                ->add(AuthnMiddleware::class);
+            $app->get('/{rdvId}', GetRdvAction::class)
+                ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'viewRdv'))
+                ->add(function ($request, $handler) {
+                    $args = $request->getAttribute('route')->getArguments();
+                    return $handler->handle($request->withAttribute('rdvId', $args['rdvId'] ?? null));
+                })
+                ->add(AuthnMiddleware::class);
             $app->group('', function (RouteCollectorProxy $app) {
                 $c = $app->getContainer();
                 $app->post('', CreateRdvAction::class)->add(InputRdvHydrationMiddleware::class)->add(new AuthzMiddleware($c->get(AuthzService::class), 'createRdv'));

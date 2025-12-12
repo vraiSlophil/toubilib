@@ -10,12 +10,15 @@ use toubilib\core\application\ports\api\servicesInterfaces\ServiceRdvInterface;
 use toubilib\core\application\ports\spi\adapterInterface\MonologLoggerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use toubilib\core\core\domain\entities\Praticien;
 use toubilib\core\domain\entities\Rdv;
 use toubilib\core\domain\exceptions\RdvNotFoundException;
 use toubilib\core\domain\exceptions\PraticienNotFoundException;
 use toubilib\core\domain\exceptions\InvalidMotifException;
 use toubilib\core\domain\exceptions\SlotConflictException;
 use toubilib\core\domain\exceptions\PraticienUnavailableException;
+use toubilib\core\application\ports\api\dtos\outputs\ProfileDTO;
+use toubilib\core\domain\entities\Roles;
 
 final class ServiceRdv implements ServiceRdvInterface
 {
@@ -37,6 +40,12 @@ final class ServiceRdv implements ServiceRdvInterface
     {
         $rdvs = $this->rdvRepository->listForPraticienBetween($praticienId, $debut, $fin);
         return array_map(static fn(Rdv $e) => CreneauDTO::fromRdv($e), $rdvs);
+    }
+
+    public function listAgendaForPraticien(string $praticienId, DateTimeImmutable $debut, DateTimeImmutable $fin): array
+    {
+        $rdvs = $this->rdvRepository->listForPraticienBetween($praticienId, $debut, $fin);
+        return array_map(static fn(Rdv $e) => RendezVousDTO::fromEntity($e), $rdvs);
     }
 
     public function creerRdv(InputRendezVousDTO $input): string
@@ -80,5 +89,20 @@ final class ServiceRdv implements ServiceRdvInterface
         $rdv->annuler();
         $this->rdvRepository->delete($rdvId);
         $this->logger->log('info', 'Rdv cancelled', ['rdv_id' => $rdvId]);
+    }
+
+    public function listRdvsForUser(ProfileDTO $user): array
+    {
+        return match ($user->role) {
+            Roles::PRATICIEN => array_map(
+                static fn(Rdv $rdv) => RendezVousDTO::fromEntity($rdv),
+                $this->rdvRepository->listForPraticienBetween($user->ID, new DateTimeImmutable('-1 year'), new DateTimeImmutable('+1 year'))
+            ),
+            Roles::PATIENT => array_map(
+                static fn(Rdv $rdv) => RendezVousDTO::fromEntity($rdv),
+                $this->rdvRepository->listForPatient($user->ID)
+            ),
+            default => [],
+        };
     }
 }

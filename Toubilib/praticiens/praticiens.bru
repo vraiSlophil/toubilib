@@ -7,7 +7,16 @@ meta {
 get {
   url: {{API_SRC}}/praticiens
   body: none
-  auth: inherit
+  auth: bearer
+}
+
+headers {
+  ~Authorization: Bearer {{accessToken}}
+}
+
+// add query template link for agenda
+params:query {
+  speciality:
 }
 
 settings {
