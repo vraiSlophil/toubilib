@@ -140,4 +140,52 @@ final class PDOPraticienRepository implements PraticienRepositoryInterface
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
+
+    public function searchPraticiens(?int $specialiteId, ?string $ville): array
+    {
+        $sql = "
+            SELECT p.id, p.nom, p.prenom, p.ville, p.email, p.telephone,
+                   p.rpps_id, p.titre, p.organisation, p.nouveau_patient,
+                   s.id AS specialite_id, s.libelle AS specialite_libelle, s.description AS specialite_description
+            FROM praticien p
+            LEFT JOIN specialite s ON p.specialite_id = s.id
+            WHERE 1 = 1
+        ";
+        $params = [];
+
+        if ($specialiteId !== null) {
+            $sql .= ' AND p.specialite_id = :specialite';
+            $params[':specialite'] = $specialiteId;
+        }
+        if ($ville !== null && $ville !== '') {
+            $sql .= ' AND LOWER(p.ville) = LOWER(:ville)';
+            $params[':ville'] = $ville;
+        }
+
+        $sql .= ' ORDER BY p.nom, p.prenom';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+        return array_map(static function (array $row): Praticien {
+            return new Praticien(
+                (string)($row['id'] ?? ''),
+                (string)($row['nom'] ?? ''),
+                (string)($row['prenom'] ?? ''),
+                (string)($row['ville'] ?? ''),
+                (string)($row['email'] ?? ''),
+                (string)($row['telephone'] ?? ''),
+                (string)($row['rpps_id'] ?? ''),
+                (string)($row['titre'] ?? 'Dr.'),
+                (bool)($row['nouveau_patient'] ?? false),
+                (bool)($row['organisation'] ?? false),
+                new Specialite(
+                    (int)($row['specialite_id'] ?? 0),
+                    (string)($row['specialite_libelle'] ?? ''),
+                    $row['specialite_description'] ?? null
+                )
+            );
+        }, $rows);
+    }
 }

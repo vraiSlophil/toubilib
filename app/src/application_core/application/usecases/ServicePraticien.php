@@ -37,4 +37,10 @@ final class ServicePraticien implements ServicePraticienInterface
         $this->monologLogger->debug(print_r($detail, true));
         return $detail ? PraticienDetailDTO::fromEntity($detail) : null;
     }
+
+    public function rechercherPraticiens(?int $specialiteId, ?string $ville): array
+    {
+        $entities = $this->praticienRepository->searchPraticiens($specialiteId, $ville);
+        return array_map(static fn($praticien) => PraticienDTO::fromEntity($praticien), $entities);
+    }
 }

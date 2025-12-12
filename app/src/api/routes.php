@@ -28,6 +28,8 @@ return function (App $app): App {
         $app->get('/', GetRootAction::class);
         $app->post('/auth/signin', SigninAction::class);
         $app->post('/auth/signup', SignupAction::class);
+
+
         $app->group('/praticiens', function (RouteCollectorProxy $app) {
             $app->get('', ListPraticiensAction::class);
             $app->group('/{praticienId}', function (RouteCollectorProxy $app) {
@@ -37,6 +39,8 @@ return function (App $app): App {
                     ->add(AuthnMiddleware::class);
             });
         });
+
+
         $app->group('/rdvs', function (RouteCollectorProxy $app) {
             $app->get('', ListRdvsAction::class)
                 ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'listRdvs'))
