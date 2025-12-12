@@ -91,16 +91,71 @@ final class ServiceRdv implements ServiceRdvInterface
         $this->logger->log('info', 'Rdv cancelled', ['rdv_id' => $rdvId]);
     }
 
-    public function listRdvsForUser(ProfileDTO $user): array
+    public function listRdvsForUser(ProfileDTO $user, bool $pastOnly = false): array
     {
         return match ($user->role) {
             Roles::PRATICIEN => array_map(
                 static fn(Rdv $rdv) => RendezVousDTO::fromEntity($rdv),
-                $this->rdvRepository->listForPraticienBetween($user->ID, new DateTimeImmutable('-1 year'), new DateTimeImmutable('+1 year'))
+                $this->rdvRepository->listForPraticienBetween(
+                    $user->ID,
+                    $pastOnly ? new DateTimeImmutable('-10 years') : new DateTimeImmutable('-1 year'),
+                    $pastOnly ? new DateTimeImmutable() : new DateTimeImmutable('+1 year')
+                )
             ),
             Roles::PATIENT => array_map(
                 static fn(Rdv $rdv) => RendezVousDTO::fromEntity($rdv),
-                $this->rdvRepository->listForPatient($user->ID)
+                array_filter(
+                    $this->rdvRepository->listForPatient($user->ID),
+                    static fn(Rdv $rdv) => !$pastOnly || $rdv->getFin() < new DateTimeImmutable()
+                )
+            ),
+            default => [],
+        };
+    }
+
+
+    public function listRdvsFiltered(ProfileDTO $user, ?\DateTimeImmutable $debut, ?\DateTimeImmutable $fin, ?string $praticienId, bool $pastOnly): array
+    {
+        $debutDefault = $pastOnly ? new DateTimeImmutable('-10 years') : new DateTimeImmutable('-1 year');
+        $finDefault = $pastOnly ? new DateTimeImmutable() : new DateTimeImmutable('+1 year');
+
+        return match ($user->role) {
+            Roles::PRATICIEN => array_map(
+                static fn(Rdv $rdv) => RendezVousDTO::fromEntity($rdv),
+                $this->rdvRepository->listForPraticienBetween(
+                    $praticienId ?? $user->ID,
+                    $debut ?? $debutDefault,
+                    $fin ?? $finDefault
+                )
+            ),
+            Roles::PATIENT => array_map(
+                static fn(Rdv $rdv) => RendezVousDTO::fromEntity($rdv),
+                array_filter(
+                    $this->rdvRepository->listForPatient($user->ID),
+                    static function (Rdv $rdv) use ($debut, $fin, $praticienId, $pastOnly) {
+                        // Filter by pastOnly
+                        if ($pastOnly && $rdv->getFin() >= new DateTimeImmutable()) {
+                            return false;
+                        }
+
+                        // Filter by debut
+                        if ($debut !== null && $rdv->getDebut() < $debut) {
+                            return false;
+                        }
+
+                        // Filter by fin
+                        if ($fin !== null && $rdv->getDebut() > $fin) {
+                            return false;
+                        }
+
+                        // Filter by praticienId
+                        if ($praticienId !== null && $rdv->getPraticienId() !== $praticienId) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+                )
             ),
             default => [],
         };

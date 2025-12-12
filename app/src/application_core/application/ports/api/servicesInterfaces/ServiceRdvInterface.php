@@ -20,7 +20,7 @@ interface ServiceRdvInterface
 
     public function listAgendaForPraticien(string $praticienId, DateTimeImmutable $debut, DateTimeImmutable $fin): array;
 
-    public function listRdvsForUser(ProfileDTO $user): array;
+    public function listRdvsForUser(ProfileDTO $user, bool $pastOnly = false): array;
 
     public function updateRdvStatus(string $rdvId, bool $status);
 }

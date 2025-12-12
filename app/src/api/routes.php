@@ -45,6 +45,9 @@ return function (App $app): App {
             $app->get('', ListRdvsAction::class)
                 ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'listRdvs'))
                 ->add(AuthnMiddleware::class);
+//            $app->get('/history', ListRdvsAction::class)
+//                ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'listRdvs'))
+//                ->add(AuthnMiddleware::class);
             $app->get('/{rdvId}', GetRdvAction::class)
                 ->add(new AuthzMiddleware($app->getContainer()->get(AuthzService::class), 'viewRdv'))
                 ->add(AuthnMiddleware::class);

@@ -14,9 +14,9 @@ class EditRdvAction
         private ServiceRdvInterface $serviceRdv
     ) {}
 
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $rdvId = $args['rdvId'] ?? null;
+        $rdvId = $request->getAttribute('rdvId');
 
         if (!$rdvId) {
             return ApiResponseBuilder::create()
