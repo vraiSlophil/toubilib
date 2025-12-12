@@ -3,8 +3,6 @@ networks:
     driver: bridge
 
 services:
-  # service api.toubeelib : api pour la prise de rdv
-  #
   api.toubilib:
     build:
       context: build
@@ -19,13 +17,19 @@ services:
     depends_on:
       - toubiprati.db
       - toubiauth.db
+      - toubirdv.db
+      - toubipat.db
+    env_file: ./app/config/.env
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
-
-    # service toubiprat.db : base de données postgresql pour les praticiens
 
   toubiprati.db:
     image: 'postgres:latest'
-    env_file: ./toubipratdb.env
+    env_file:
+      - ./app/config/.env
+    environment:
+      POSTGRES_USER: ${PRAT_USERNAME}
+      POSTGRES_PASSWORD: ${PRAT_PASSWORD}
+      POSTGRES_DB: ${PRAT_DATABASE}
     ports:
       - '5432:5432'
     networks:
@@ -35,7 +39,12 @@ services:
 
   toubiauth.db:
     image: 'postgres:latest'
-    env_file: ./toubiauthdb.env
+    env_file:
+      - ./app/config/.env
+    environment:
+      POSTGRES_USER: ${AUTH_USERNAME}
+      POSTGRES_PASSWORD: ${AUTH_PASSWORD}
+      POSTGRES_DB: ${AUTH_DATABASE}
     ports:
       - '5433:5432'
     networks:
@@ -45,7 +54,12 @@ services:
 
   toubirdv.db:
     image: 'postgres:latest'
-    env_file: ./toubirdvdb.env
+    env_file:
+      - ./app/config/.env
+    environment:
+      POSTGRES_USER: ${RDV_USERNAME}
+      POSTGRES_PASSWORD: ${RDV_PASSWORD}
+      POSTGRES_DB: ${RDV_DATABASE}
     ports:
       - '5434:5432'
     networks:
@@ -55,7 +69,12 @@ services:
 
   toubipat.db:
     image: 'postgres:latest'
-    env_file: ./toubipatientdb.env
+    env_file:
+      - ./app/config/.env
+    environment:
+      POSTGRES_USER: ${PAT_USERNAME}
+      POSTGRES_PASSWORD: ${PAT_PASSWORD}
+      POSTGRES_DB: ${PAT_DATABASE}
     ports:
       - '5435:5432'
     networks:
@@ -63,13 +82,9 @@ services:
     volumes:
       - ./sql:/var/sql
 
-  #
-  # service administration des bases sql
-  #
   adminer:
     image: adminer
     ports:
       - '8080:8080'
     networks:
       - toubilib.net
-
