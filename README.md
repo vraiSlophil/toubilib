@@ -591,7 +591,26 @@ Accessible si l'utilisateur est le praticien ou le patient du RDV (`AuthzService
 
 ---
 
-## 6\. Format générique des réponses API
+## 6\. Collection Bruno pour tester l'API
+
+Un dossier `Bruno/` est disponible à la racine du projet et contient **toutes les routes API déjà pré-configurées** pour faciliter les tests avec **Bruno** (client API).
+
+La collection comprend :
+* **auth/** : routes d'authentification (`POST-signin.bru`, `POST-signup.bru`)
+* **praticiens/** : routes praticiens (`GET-list-praticiens.bru`, `GET-praticien.bru`, `GET-praticien-rdvs.bru`)
+* **rdvs/** : routes rendez-vous (`GET-list-rdvs.bru`, `GET-rdv.bru`, `POST-rdv.bru`, `PATCH-rdv.bru`, `DELETE-rdv.bru`)
+* **indisponibilites/** : routes indisponibilités (`GET-list-indisponibilites.bru`, `POST-create-indisponibilite.bru`, `DELETE-indisponibilite.bru`)
+* **environments/** : environnement de développement (`DEV.bru`) avec l'URL de base configurée
+
+Pour utiliser la collection :
+1. Installez [Bruno](https://www.usebruno.com/)
+2. Ouvrez la collection depuis le dossier `Bruno/`
+3. Sélectionnez l'environnement `DEV`
+4. Testez les routes directement !
+
+---
+
+## 7\. Format générique des réponses API
 
 Toutes les réponses sont construites via `ApiResponseBuilder` et sont de la forme:
 
@@ -637,9 +656,9 @@ En mode debug (si activé):
 
 ---
 
-## 7\. Tableau de bord des fonctionnalités
+## 8\. Tableau de bord des fonctionnalités
 
-### 7\.1 Fonctionnalités implémentées
+### 8\.1 Fonctionnalités implémentées
 
 | Fonctionnalité                                                                                    | Statut |
 |---------------------------------------------------------------------------------------------------|-------:|
@@ -659,7 +678,7 @@ En mode debug (si activé):
 
 ---
 
-### 7\.2 Répartition des réalisations (par membre du groupe)
+### 8\.2 Répartition des réalisations (par membre du groupe)
 
 | Membre       | Réalisations principales |
 |--------------|--------------------------|
